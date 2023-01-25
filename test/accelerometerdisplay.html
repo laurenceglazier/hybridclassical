@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Accelerometer Values</title>
+  </head>
+  <body>
+    <h1>Accelerometer Values</h1>
+    <div id="xValue"></div>
+    <div id="yValue"></div>
+    <div id="zValue"></div>
+    <script>
+      // Check if the device has an accelerometer
+      if (window.DeviceMotionEvent) {
+        // Register the event listener for the accelerometer
+        window.addEventListener("devicemotion", function (event) {
+          // Get the accelerometer values
+          var x = event.accelerationIncludingGravity.x;
+          var y = event.accelerationIncludingGravity.y;
+          var z = event.accelerationIncludingGravity.z;
+          // Update the HTML elements with the new values
+          document.getElementById("xValue").innerHTML = "X: " + x;
+          document.getElementById("yValue").innerHTML = "Y: " + y;
+          document.getElementById("zValue").innerHTML = "Z: " + z;
+        });
+      } else {
+        // Display an error message if the device does not have an accelerometer
+        alert("Sorry, your device does not have an accelerometer.");
+      }
+    </script>
+  </body>
+</html>
