@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Orientation and Motion</title>
+    <script>
+      window.addEventListener("deviceorientation", handleOrientation);
+      window.addEventListener("devicemotion", handleMotion);
+
+      function handleOrientation(event) {
+        var orientationOutput = document.getElementById("orientationOutput");
+        var orientationProperties = "";
+        for (var prop in event) {
+          orientationProperties += prop + ": " + event[prop] + "<br>";
+        }
+        orientationOutput.innerHTML = orientationProperties;
+      }
+
+      function handleMotion(event) {
+        var motionOutput = document.getElementById("motionOutput");
+        var motionProperties = "";
+        for (var prop in event) {
+          if (prop === "acceleration") {
+            motionProperties += "<br>acceleration:<br>";
+            for (var accelerationProp in event[prop]) {
+              motionProperties += "  " + accelerationProp + ": " + event[prop][accelerationProp] + "<br>";
+            }
+          } else if (prop === "accelerationIncludingGravity") {
+            motionProperties += "<br>accelerationIncludingGravity:<br>";
+            for (var accelerationIncludingGravityProp in event[prop]) {
+              motionProperties += "  " + accelerationIncludingGravityProp + ": " + event[prop][accelerationIncludingGravityProp] + "<br>";
+            }
+          } else if (prop === "rotationRate") {
+            motionProperties += "<br>rotationRate:<br>";
+            for (var rotationRateProp in event[prop]) {
+              motionProperties += "  " + rotationRateProp + ": " + event[prop][rotationRateProp] + "<br>";
+            }
+          } else {
+            motionProperties += prop + ": " + event[prop] + "<br>";
+          }
+        }
+        motionOutput.innerHTML = motionProperties;
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>Orientation Properties:</h1>
+    <div id="orientationOutput"></div>
+    <h1>Motion Properties:</h1>
+    <div id="motionOutput"></div>
+  </body>
+</html>
