@@ -9,27 +9,7 @@
       name="description"
       content="Keyboard simulator for Hybrid Classical Conductor system"
     />
-    <style>
-      button {
-        margin-left: 30px;
-        margin-right: 30px;
-      }
-      #fileName {
-        display: inline-block;
-        margin-left: 10px;
-      }
-      #volume {
-        margin-left: 35px;
-      }
-      #tempo {
-        margin-left: 50px; /* add this line */
-      }
-      .vertical-slider {
-        transform: rotate(-90deg);
-        width: 200px;
-        margin-top: 40px;
-      }
-    </style>
+    <link rel="stylesheet" href="../css/style.css" />
     <title>Hybrid Classical Simulator</title>
     <script>
       window.addEventListener("deviceorientation", handleOrientation);
@@ -75,24 +55,27 @@
   </head>
   <body>
     <div id="container">
+      <h1>HYBRID CLASSICAL SIMULATOR</h1>
+      <p class="version-number">V. 23.02.13</p>
+
       <details>
-        <summary
-          style="font-size: x-large; font-weight: bold; text-align: center"
-        >
-          HYBRID CLASSICAL SIMULATOR
-        </summary>
-        Orientation Properties:
+        
+        <summary>Show/hide Accelerometer and Gyroscope Data</summary>
+        
+        <h2>Orientation Properties</h2>
 
         <div id="orientationOutput"></div>
-        Motion Properties:
+        <h2>Motion Properties</h2>
+        
         <div id="motionOutput"></div>
         <span style="text-align: center"></span>
-        <div style="text-align: center">V. 23.01.25</div>
+
         <br /><br />
         <div id="xValue"></div>
         <div id="yValue"></div>
         <div id="zValue"></div>
         <div id="motion-sensor-value">Motion Sensor Value goes here</div>
+
       </details>
 
       <br />
