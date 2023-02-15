@@ -52,21 +52,22 @@
         motionOutput.innerHTML = motionProperties;
       }
     </script>
+    <script src="../js/app.js"></script>
   </head>
   <body>
     <div id="container">
       <h1>HYBRID CLASSICAL SIMULATOR</h1>
-      <p class="version-number">V. 23.02.13</p>
+      <p class="version-number">V. 23.02.15</p>
 
       <details>
-        
+        <!-- Accelerometer and Gyroscope Data -->
         <summary>Show/hide Accelerometer and Gyroscope Data</summary>
-        
+
         <h2>Orientation Properties</h2>
 
         <div id="orientationOutput"></div>
         <h2>Motion Properties</h2>
-        
+
         <div id="motionOutput"></div>
         <span style="text-align: center"></span>
 
@@ -75,24 +76,25 @@
         <div id="yValue"></div>
         <div id="zValue"></div>
         <div id="motion-sensor-value">Motion Sensor Value goes here</div>
-
+        <br />
+        <hr />
       </details>
 
-      <br />
-      <!-- Add button elements -->
+      <!-- Open File button and File name -->
       <button id="openFileButton">Open Audio File<br /><br />O</button>
       <div id="fileName"></div>
-      <br /><br /><br /><br /><br />
-      <!-- PLAY / PAUSE BUTTON -->
-      <!-- Add space button -->
-      <button id="spaceButton">PLAY / PAUSE<br /><br />┗──────┛</button>
-      <br /><br /><br /><br /><br />
-      <!-- TEMPO CONTROLS -->
-      <div style="display: flex">
+
+      <!-- PLAY / PAUSE BUTTON below Open Audio File button -->
+      <div>
+        <button id="spaceButton">PLAY / PAUSE<br /><br />┗──────┛</button>
+      </div>
+
+      <!-- TEMPO SLIDER -->
+      <div id="tempoSlider" style="display: flex">
         <input
           type="range"
           id="tempo"
-          min="-0.5"
+          min="0.5"
           max="1.5"
           step="0.01"
           value="1"
@@ -100,29 +102,29 @@
         />
         <div id="tempo-value">1</div>
       </div>
-      <!-- VOLUME CONTROLS -->
-      <div>
-        <br /><br /><br />
-        <span style="margin-left: 90px">🔊</span>
-        <br /><br /><br /><br /><br />
-      </div>
-      <input
-        type="range"
-        id="volumeSlider"
-        class="vertical-slider"
-        min="0"
-        max="1"
-        step="0.01"
-        orientation="vertical"
-        oninput="setVolume(this.value)"
-      />
-      <br /><br /><br /><br /><br /><br /><br />
-      <span style="margin-left: 90px">🔇</span>
-      <!-- Add up button -->
-      <br /><br />
+
+      <!-- VOLUME SLIDER -->
+
+      <fieldset aria-label="Volume Control" style="border: none">
+        <div style="margin-left: 90px; margin-bottom: 60px">🔊</div>
+
+        <div>
+          <input
+            type="range"
+            id="volumeSlider"
+            class="vertical-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            oninput="setVolume(this.value)"
+          />
+        </div>
+
+        <div style="margin-left: 90px; margin-top: 90px">🔇</div>
+      </fieldset>
+
       <div id="volume"></div>
-      <br />
-      <!-- Add down button -->
+
       <!-- Add a file input element -->
       <input
         type="file"
