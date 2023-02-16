@@ -38,3 +38,224 @@ motionProperties +=
 motionOutput.innerHTML = motionProperties;
 }
    
+
+        // set the initial values of the x, y and z values ...
+        let xValue = 0;
+        let yValue = 0;
+        let zValue = 0;
+
+        // ... and display them
+        document.getElementById("xValue").innerHTML =
+          "X = " + xValue.toFixed(2);
+        document.getElementById("yValue").innerHTML =
+          "Y = " + yValue.toFixed(2);
+        document.getElementById("zValue").innerHTML =
+          "Z = " + zValue.toFixed(2);
+        document.getElementById("motion-sensor-value").innerHTML =
+          "motion-sensor-value = " + yValue.toFixed(2);
+        // Create an audio element to play the audio file
+        const audio = new Audio();
+        // Get the file input element
+        const fileInput = document.getElementById("fileInput");
+        // Get the button elements
+        const openFileButton = document.getElementById("openFileButton");
+        const spaceButton = document.getElementById("spaceButton");
+        // Get the volume slider element
+        const volumeSlider = document.getElementById("volumeSlider");
+        volumeSlider.addEventListener("touchstart", function (event) {
+          event.preventDefault();
+        });
+
+        // Get the current volume
+        let currentVolume = volumeSlider.value;
+        // Keep track of the previous y value
+        let prevY = 0;
+        // Keep track of the time when the previous y value was recorded
+        let prevTime = Date.now();
+
+        // Register the event listener for the accelerometer
+        window.addEventListener("devicemotion", function (event) {
+          // Get the accelerometer values
+          var x = event.accelerationIncludingGravity.x;
+          var y = event.accelerationIncludingGravity.y;
+          var z = event.accelerationIncludingGravity.z;
+          // Update the HTML elements with the new values
+          document.getElementById("xValue").innerHTML = "X: " + x.toFixed(2);
+          document.getElementById("yValue").innerHTML = "Y: " + y.toFixed(2);
+          document.getElementById("zValue").innerHTML = "Z: " + z.toFixed(2);
+          // alert("Y: " + y +" prevY: " + prevY +" Date.now(): " + Date.now() + " prevTime: " + prevTime);
+          // Check if y has changed by more than 1.0 in the last second
+          if (Math.abs(y - prevY) > 1.0) {
+            document.getElementById("motion-sensor-value").innerHTML =
+              "Y: " +
+              y.toFixed(2) +
+              " prevY: " +
+              prevY.toFixed(2) +
+              " Vol: " +
+              currentVolume +
+              " Slider: " +
+              volumeSlider.value;
+            // alert("Passed first if - Y: "+ y +" prevY: " + prevY.toFixed(2));
+
+            /*
+            if (Date.now() - prevTime <= 1000) {
+              // alert("Threshold");
+              // Update the previous y value and time
+              prevY = y;
+              prevTime = Date.now();
+
+              // Increase the volume if it is less than 1
+              if (currentVolume < 1) {
+                currentVolume += 0.1;
+              }
+              // Set the volume of the audio element
+              audioElement.volume = currentVolume;
+              // Update the volume slider value
+              volumeSlider.value = currentVolume;
+            }
+            */
+
+            // Increase the volume if it is less than 1
+            if (Date.now() - prevTime <= 10000000) {
+              // alert(currentVolume);
+              if (currentVolume <= 1.5) {
+                // currentVolume += 0.1;
+                //currentVolume=currentVolume+.1
+                //alert(currentVolume);
+                // Increment the volume value
+                let currentValue = Number(volumeSlider.value);
+                let currentVolume = Number(volumeSlider.value);
+                if (y > prevY) {
+                  volumeSlider.value = Math.min(currentValue + 0.1, 1);
+                  volumeSlider.value = Math.min(currentVolume + 0.1, 1);
+                  document.getElementById("motion-sensor-value").innerHTML =
+                    "Y: " +
+                    y.toFixed(2) +
+                    " prevY: " +
+                    prevY.toFixed(2) +
+                    " Vol: " +
+                    currentVolume +
+                    " Slider: " +
+                    volumeSlider.value +
+                    " UP";
+                }
+                if (y < prevY) {
+                  volumeSlider.value = Math.min(currentValue - 0.1, 1);
+                  volumeSlider.value = Math.min(currentVolume - 0.1, 1);
+                  document.getElementById("motion-sensor-value").innerHTML =
+                    "Y: " +
+                    y.toFixed(2) +
+                    " prevY: " +
+                    prevY.toFixed(2) +
+                    " Vol: " +
+                    currentVolume +
+                    " Slider: " +
+                    volumeSlider.value +
+                    " DOWN";
+                }
+
+                //if (y<prevY) {
+                //  volumeSlider.value = Math.min(currentValue - 0.01, 1);
+                //}
+                setVolume(volumeSlider.value);
+              }
+            }
+
+            prevY = y;
+
+            // Set the volume of the audio element
+            audioElement.volume = currentVolume;
+            // Update the volume slider value
+            volumeSlider.value = currentVolume;
+          }
+        });
+
+        // Add event listener for keydown event
+        document.addEventListener("keydown", function (event) {
+          if (event.code === "ArrowLeft") {
+            // Decrement the slider value
+            let currentValue = Number(tempo.value);
+            tempo.value = currentValue - 0.01;
+            setTempo(tempo.value);
+          } else if (event.code === "ArrowRight") {
+            // Increment the slider value
+            let currentValue = Number(tempo.value);
+            tempo.value = currentValue + 0.01;
+            setTempo(tempo.value);
+          }
+          if (event.code === "ArrowUp") {
+            // Increment the volume value
+            let currentValue = Number(volumeSlider.value);
+            let currentVolume = Number(volumeSlider.value);
+            volumeSlider.value = Math.min(currentValue + 0.01, 1);
+            volumeSlider.value = Math.min(currentVolume + 0.01, 1);
+            setVolume(volumeSlider.value);
+          } else if (event.code === "ArrowDown") {
+            // Decrement the volume value
+            let currentValue = Number(volumeSlider.value);
+            let currentVolume = Number(volumeSlider.value);
+            volumeSlider.value = Math.max(currentValue - 0.01, 0);
+            volumeSlider.value = Math.max(currentVolume - 0.01, 0);
+            setVolume(volumeSlider.value);
+          }
+          if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+            event.preventDefault();
+          }
+        });
+        // Disable all buttons except the openFileButton
+        spaceButton.disabled = true;
+        // Add event listeners for each button
+        const volumeDiv = document.getElementById("volume");
+        const tempoDiv = document.getElementById("tempo");
+        spaceButton.addEventListener("click", function () {
+          console.log("Space");
+          spaceButton.blur();
+          if (audio.paused) {
+            // If the audio is paused, resume playback
+            audio.play();
+          } else {
+            // If the audio is playing, pause it
+            audio.pause();
+          }
+        });
+        // Open the file input element when the button is clicked
+        openFileButton.addEventListener("click", function () {
+          fileInput.click();
+        });
+        // Set the audio source to the selected file when a file is chosen
+        fileInput.addEventListener("change", function () {
+          audio.src = URL.createObjectURL(fileInput.files[0]);
+          audio.playbackRate = 1;
+          audio.volume = 0.5;
+          // Set the text content of the fileName div to the file name
+          fileName.textContent = fileInput.files[0].name;
+          // volumeDiv.innerHTML = Math.floor(audio.volume * 100) + "%";
+          tempoDiv.innerHTML = audio.playbackRate;
+          // Enable all buttons
+          spaceButton.disabled = false;
+          // Hide the file input element and remove focus from the button
+          fileInput.style.display = "none";
+          openFileButton.blur();
+          spaceButton.blur();
+          // audio.play(); // Start playing the audio when a file is chosen
+        });
+        // Look for keypress O as shortcut to File Open dialog
+        document.addEventListener("keydown", function (event) {
+          if (event.code === "KeyO") {
+            openFileButton.click();
+          }
+        });
+        document.addEventListener("keydown", function (event) {
+          switch (event.key) {
+            case " ": // Check if the space bar was pressed
+              spaceButton.click();
+          }
+        });
+        function setTempo(value) {
+          audio.playbackRate = value;
+          document.getElementById("tempo-value").innerHTML = value;
+        }
+        function setVolume(value) {
+          audio.volume = value;
+          // document.getElementById("volume-value").innerHTML = value;
+        }
