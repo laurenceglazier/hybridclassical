@@ -1,6 +1,14 @@
 // Disable all buttons except the openFileButton 
 spaceButton.disabled = true; 
 
+document.addEventListener("keydown", function (event) {
+    switch (event.key) {
+      case " ": // Check if the space bar was pressed
+        spaceButton.click();
+    }
+  });
+  
+
 spaceButton.addEventListener("click", function () { 
   console.log("Space"); 
   spaceButton.blur(); 

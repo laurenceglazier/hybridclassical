@@ -140,6 +140,7 @@ document.addEventListener("keydown", function (event) {
     tempo.value = currentValue + 0.01;
     setTempo(tempo.value);
   }
+  
   if (event.code === "ArrowUp") {
     // Increment the volume value
     let currentValue = Number(volumeSlider.value);
@@ -162,19 +163,20 @@ document.addEventListener("keydown", function (event) {
 
 // Add event listeners for each button
 const volumeDiv = document.getElementById("volume");
-const tempoDiv = document.getElementById("tempo");
 
-document.addEventListener("keydown", function (event) {
-  switch (event.key) {
-    case " ": // Check if the space bar was pressed
-      spaceButton.click();
-  }
-});
-function setTempo(value) {
-  audio.playbackRate = value;
-  document.getElementById("tempo-value").innerHTML = value;
-}
 function setVolume(value) {
   audio.volume = value;
   // document.getElementById("volume-value").innerHTML = value;
 }
+
+
+const tempoDiv = document.getElementById("tempo");
+
+
+
+
+function setTempo(value) {
+  audio.playbackRate = value;
+  document.getElementById("tempo-value").innerHTML = value;
+}
+
