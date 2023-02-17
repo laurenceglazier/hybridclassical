@@ -15,7 +15,7 @@
   <body>
     <div id="container">
       <h1>HYBRID CLASSICAL SIMULATOR</h1>
-      <p class="version-number">V. 23.02.16</p>
+      <p class="version-number">V. 23.02.17</p>
 
       <details>
         <!-- Accelerometer and Gyroscope Data -->
@@ -42,6 +42,14 @@
       <button id="openFileButton">Open Audio File<br /><br />O</button>
       <div id="fileName"></div>
 
+      <!-- Add a file input element -->
+      <input
+        type="file"
+        id="fileInput"
+        accept="audio/*"
+        style="display: none"
+      />
+
       <!-- PLAY / PAUSE BUTTON below Open Audio File button -->
       <div>
         <button id="spaceButton">PLAY / PAUSE<br /><br />┗──────┛</button>
@@ -59,13 +67,11 @@
           oninput="setTempo(this.value)"
         />
         <div id="tempo-value">1</div>
-      </div> 
+      </div>
 
       <!-- VOLUME SLIDER -->
-
       <fieldset aria-label="Volume Control" style="border: none">
         <div style="margin-left: 90px; margin-bottom: 60px">🔊</div>
-
         <div>
           <input
             type="range"
@@ -77,22 +83,14 @@
             oninput="setVolume(this.value)"
           />
         </div>
-
         <div style="margin-left: 90px; margin-top: 90px">🔇</div>
       </fieldset>
 
       <div id="volume"></div>
-
-      <!-- Add a file input element -->
-      <input
-        type="file"
-        id="fileInput"
-        accept="audio/*"
-        style="display: none"
-      />
-
     </div>
     <!-- end of container div -->
+    <script src="../js/display-data.js"></script>
+    <script src="../js/play-file.js"></script>
     <script src="../js/app.js"></script>
   </body>
 </html>
