@@ -1,3 +1,12 @@
+// Create an audio element to play the audio file
+
+const audio = new Audio();
+// Get the file input element
+const fileInput = document.getElementById("fileInput");
+// Get the button elements
+const openFileButton = document.getElementById("openFileButton");
+const spaceButton = document.getElementById("spaceButton");
+
 // Disable all buttons except the openFileButton 
 spaceButton.disabled = true; 
 

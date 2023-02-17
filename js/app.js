@@ -9,14 +9,7 @@ document.getElementById("yValue").innerHTML = "Y = " + yValue.toFixed(2);
 document.getElementById("zValue").innerHTML = "Z = " + zValue.toFixed(2);
 document.getElementById("motion-sensor-value").innerHTML =
   "motion-sensor-value = " + yValue.toFixed(2);
-// Create an audio element to play the audio file
 
-const audio = new Audio();
-// Get the file input element
-const fileInput = document.getElementById("fileInput");
-// Get the button elements
-const openFileButton = document.getElementById("openFileButton");
-const spaceButton = document.getElementById("spaceButton");
 // Get the volume slider element
 const volumeSlider = document.getElementById("volumeSlider");
 volumeSlider.addEventListener("touchstart", function (event) {
