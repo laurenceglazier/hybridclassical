@@ -1,4 +1,5 @@
 // Create an audio element to play the audio file
+const tempoDiv = document.getElementById("tempo");
 
 const audio = new Audio();
 // Get the file input element

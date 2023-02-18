@@ -1,3 +1,5 @@
+//const audioElement = document.getElementById("audio");
+
 // set the initial values of the x, y and z values ...
 let xValue = 0;
 let yValue = 0;
@@ -74,10 +76,10 @@ window.addEventListener("devicemotion", function (event) {
         //alert(currentVolume);
         // Increment the volume value
         let currentValue = Number(volumeSlider.value);
-        let currentVolume = Number(volumeSlider.value);
+        //let currentVolume = Number(volumeSlider.value);
         if (y > prevY) {
           volumeSlider.value = Math.min(currentValue + 0.1, 1);
-          volumeSlider.value = Math.min(currentVolume + 0.1, 1);
+          currentVolume = Math.min(currentVolume + 0.1, 1);
           document.getElementById("motion-sensor-value").innerHTML =
             "Y: " +
             y.toFixed(2) +
@@ -91,7 +93,7 @@ window.addEventListener("devicemotion", function (event) {
         }
         if (y < prevY) {
           volumeSlider.value = Math.min(currentValue - 0.1, 1);
-          volumeSlider.value = Math.min(currentVolume - 0.1, 1);
+          currentVolume = Math.min(currentVolume - 0.1, 1);
           document.getElementById("motion-sensor-value").innerHTML =
             "Y: " +
             y.toFixed(2) +
@@ -148,7 +150,24 @@ const volumeDiv = document.getElementById("volume");
 
 function setVolume(value) {
   audio.volume = value;
+  audioElement.volume = value;
+  currentVolume = value;
   // document.getElementById("volume-value").innerHTML = value;
 }
 
 
+function detectShake(event) {
+  const { acceleration } = event;
+  if (!acceleration) {
+    return;
+  }
+
+  const yAcceleration = acceleration.y;
+
+  if (Math.abs(yAcceleration) > shakeThreshold) {
+    // Change the volume based on the yAcceleration value
+    // For example:
+    const volumeChange = Math.sign(yAcceleration) * volumeStep;
+    setVolume(currentVolume + volumeChange);
+  }
+}
