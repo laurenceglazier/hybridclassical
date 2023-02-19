@@ -9,6 +9,8 @@ var zGyro = 0;
 var revolutionCount = 0;
 var direction = 0;
 
+const tempoButton = document.querySelector('button[name="tempo-lock"]');
+
 // Request permission to access the device's sensors
 if (
   typeof DeviceMotionEvent !== "undefined" &&
@@ -59,16 +61,29 @@ function handleMotionEvent(event) {
     var revolutionThreshold = 0.4505;
     var revolutionDelta = Math.abs(yGyro) / 100;
     revolutionCount += revolutionDelta;
-// Log the current values of revolutionCount and revolutionThreshold
-console.log(`revolutionCount: ${revolutionCount}, revolutionThreshold: ${revolutionThreshold}`);
+    // Log the current values of revolutionCount and revolutionThreshold
+    console.log(
+      `revolutionCount: ${revolutionCount}, revolutionThreshold: ${revolutionThreshold}`
+    );
+
     // If the revolution count has reached the threshold, update the slider position
     if (revolutionCount >= revolutionThreshold) {
-      console.log('Corkscrew gesture detected!');
-      // Update the slider position based on the direction
-      var sliderDelta = direction * 0.02; // One revolution counts as one increment/decrement of 0.01
-      var currentValue = Number(tempo.value);
-      tempo.value = (currentValue + sliderDelta).toFixed(2);
-      setTempo(tempo.value);
+      console.log("Corkscrew gesture detected!");
+
+      // Only update the tempo if the tempo-lock button is pressed
+      if (
+        document
+          .querySelector('button[name="tempo-lock"]')
+          .classList.contains("pressed")
+      ) {
+        // Update the slider position based on the direction
+        var sliderDelta = direction * 0.02; // One revolution counts as one increment/decrement of 0.01
+        var currentValue = Number(tempo.value);
+        tempo.value = (currentValue + sliderDelta).toFixed(2);
+        setTempo(tempo.value);
+
+        console.log(`tempo updated in handleMotionEvent: ${tempo.value}`);
+      }
 
       // Reset the revolution count
       revolutionCount = 0;
