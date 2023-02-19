@@ -3,6 +3,25 @@ button {
   margin: 30px;
 }
 
+.toggle-button {
+  width: 200px;
+  height: 200px;
+  border-radius: 0;
+  background-color: gray;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.toggle-button:active {
+  background-color: red;
+}
+
+.toggle-button.pressed {
+  background-color: red;
+}
+
+
 #fileName {
   display: inline-block;
 }

@@ -35,6 +35,9 @@
         <div id="zValue"></div>
         <div id="motion-sensor-value">Motion Sensor Value goes here</div>
         <br />
+        tempo-value
+        <div id="tempo-value">1</div>
+        <br />
         <hr />
       </details>
 
@@ -66,7 +69,8 @@
           value="1"
           oninput="setTempo(this.value)"
         />
-        <div id="tempo-value">1</div>
+        <button class="toggle-button" name="tempo-lock" onclick="toggleButton(this)">TEMPO</button>
+
       </div>
 
       <!-- VOLUME SLIDER -->
@@ -82,8 +86,10 @@
             step="0.01"
             oninput="setVolume(this.value)"
           />
-        </div>
-        <div style="margin-left: 90px; margin-top: 90px">🔇</div>
+          <button class="toggle-button" name="volume-lock" onclick="toggleButton(this)">VOLUME</button>
+
+      </div>
+<div style="margin-left: 90px; margin-top: 90px">🔇</div>
       </fieldset>
 
       <div id="volume"></div>
