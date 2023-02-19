@@ -1,6 +1,6 @@
 button {
   display: inline-block;
-  margin: 30px;
+  margin: 15px;
 }
 
 .toggle-button {
@@ -27,8 +27,8 @@ button {
 }
 
 #tempoSlider {
-  margin-top: 60px;
-  margin-bottom: 60px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 #volume {
   margin-left: 35px;
