@@ -6,30 +6,10 @@ const audio = new Audio();
 const fileInput = document.getElementById("fileInput");
 // Get the button elements
 const openFileButton = document.getElementById("openFileButton");
-const spaceButton = document.getElementById("spaceButton");
 
-// Disable all buttons except the openFileButton 
-spaceButton.disabled = true; 
 
-document.addEventListener("keydown", function (event) {
-    switch (event.key) {
-      case " ": // Check if the space bar was pressed
-        spaceButton.click();
-    }
-  });
-  
 
-spaceButton.addEventListener("click", function () { 
-  console.log("Space"); 
-  spaceButton.blur(); 
-  if (audio.paused) { 
-    // If the audio is paused, resume playback 
-    audio.play(); 
-  } else { 
-    // If the audio is playing, pause it 
-    audio.pause(); 
-  } 
-}); 
+
 // Open the file input element when the button is clicked 
 openFileButton.addEventListener("click", function () { 
   fileInput.click(); 
@@ -37,6 +17,8 @@ openFileButton.addEventListener("click", function () {
 // Set the audio source to the selected file when a file is chosen 
 fileInput.addEventListener("change", function () { 
   audio.src = URL.createObjectURL(fileInput.files[0]); 
+  audioElement.src = URL.createObjectURL(fileInput.files[0]); 
+
   audio.playbackRate = 1; 
   audio.volume = 0.5; 
   // Set the text content of the fileName div to the file name 
@@ -44,11 +26,10 @@ fileInput.addEventListener("change", function () {
   // volumeDiv.innerHTML = Math.floor(audio.volume * 100) + "%"; 
   tempoDiv.innerHTML = audio.playbackRate; 
   // Enable all buttons 
-  spaceButton.disabled = false; 
   // Hide the file input element and remove focus from the button 
   fileInput.style.display = "none"; 
   openFileButton.blur(); 
-  spaceButton.blur(); 
+ 
   // audio.play(); // Start playing the audio when a file is chosen 
 }); 
 // Look for keypress O as shortcut to File Open dialog 

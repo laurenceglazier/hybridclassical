@@ -116,5 +116,7 @@ document.addEventListener("keydown", function (event) {
 
 function setTempo(value) {
   audio.playbackRate = value;
+  audioElement.playbackRate = value;
+
   document.getElementById("tempo-value").innerHTML = value;
 }

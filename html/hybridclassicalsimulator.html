@@ -1,103 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="NTML, CSS" />
-    <meta
-      name="description"
-      content="Keyboard simulator for Hybrid Classical Conductor system"
-    />
-    <link rel="stylesheet" href="../css/style.css" />
-    <title>Hybrid Classical Simulator</title>
-  </head>
-  <body>
-    <div id="container">
-      <h1>HYBRID CLASSICAL SIMULATOR</h1>
-      <p class="version-number">V. 23.02.17</p>
 
-      <details>
-        <!-- Accelerometer and Gyroscope Data -->
-        <summary>Show/hide Accelerometer and Gyroscope Data</summary>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords"
+    content="NTML, CSS, conductor, classical music, orchestra, virtual conductor, virtual conducting" />
+  <meta name="description" content="Keyboard simulator for Hybrid Classical Conductor system" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <title>Hybrid Classical Simulator</title>
+</head>
 
-        <h2>Orientation Properties (Gyroscope)</h2>
+<body>
 
-        <div id="orientationOutput"></div>
-        <h2>Motion Properties (Accelerometer)</h2>
+  <div class="display-top">
+    <h1>HYBRID CLASSICAL SIMULATOR</h1>
+    <p>V. 23.03.01</p>
+  </div>
 
-        <div id="motionOutput"></div>
-        <span style="text-align: center"></span>
+  <details>
+    <!-- Accelerometer and Gyroscope Data -->
+    <summary>Show/hide Accelerometer and Gyroscope Data</summary>
 
-        <br /><br />
-        <div id="xValue"></div>
-        <div id="yValue"></div>
-        <div id="zValue"></div>
-        <div id="motion-sensor-value">Motion Sensor Value goes here</div>
-        <br />
-        tempo-value
-        <div id="tempo-value">1</div>
-        <div id="volume-value">.5</div>
-        <br />
-        <hr />
-      </details>
+    <h2>Orientation Properties (Gyroscope)</h2>
+    <div id="orientationOutput"></div>
 
-      <!-- Open File button and File name -->
-      <button id="openFileButton">Open Audio File<br /><br />O</button>
-      <div id="fileName"></div>
+    <h2>Motion Properties (Accelerometer)</h2>
+    <div id="motionOutput"></div>
 
-      <!-- Add a file input element -->
-      <input
-        type="file"
-        id="fileInput"
-        accept="audio/*"
-        style="display: none"
-      />
+    <br />
+    <div id="xValue"></div>
+    <div id="yValue"></div>
+    <div id="zValue"></div>
+    <div id="motion-sensor-value">Motion Sensor Value goes here</div>
+    <br />
+    tempo-value
+    <div id="tempo-value">1</div>
+    <div id="volume-value">.5</div>
+    <br />
+    <hr />
+  </details>
 
-      <!-- PLAY / PAUSE BUTTON below Open Audio File button -->
-      <div>
-        <button id="spaceButton">PLAY / PAUSE<br /><br />┗──────┛</button>
-      </div>
+  <!-- Open File button and File name -->
+  <button id="openFileButton">Open Audio File<br /><br />O</button>
+  <div id="fileName"></div>
 
-      <!-- TEMPO SLIDER -->
-      <div id="tempoSlider" style="display: flex">
-        <input
-          type="range"
-          id="tempo"
-          min="0.5"
-          max="1.5"
-          step="0.01"
-          value="1"
-          oninput="setTempo(this.value)"
-        />
-        <button class="toggle-button" name="tempo-lock" onclick="toggleButton(this)">TEMPO</button>
-      </div>
+  <!-- Add a file input element -->
+  <input type="file" id="fileInput" accept="audio/*" style="display: none" />
+  <br>
+  <audio controls id="audioElement"></audio>
 
-      <!-- VOLUME SLIDER -->
-        <div>
-          <input
-            type="range"
-            id="volumeSlider"
-            class="vertical-slider"
-            min="0"
-            max="1"
-            step="0.01"
-            data-slider-direction="vertical"
-            oninput="setVolume(this.value)"
-          />
-          <button class="toggle-button" name="volume-lock" onclick="toggleButton(this)">VOLUME</button>
-      </div>
-      Volume:
-      <div id="volume"></div>
-      Tempo:
-      <div id="tempo"></div>
-    </div>
-    <!-- end of container div -->
 
-    <script src="../js/display-data.js"></script>
-    <script src="../js/control-tempo.js"></script>
-    <script src="../js/control-volume.js"></script>
-    <script src="../js/play-file.js"></script>
-    <script src="../js/app.js"></script>
-  </body>
+
+
+
+
+  <!-- TEMPO SLIDER -->
+  <div id="tempoSlider" style="display: flex">
+    <input type="range" id="tempo" min="0.5" max="1.5" step="0.01" value="1" oninput="setTempo(this.value)" />
+    <button class="toggle-button" name="tempo-lock" onclick="toggleButton(this)">
+      TEMPO
+    </button>
+  </div>
+
+  <!-- VOLUME SLIDER -->
+  <div>
+    <input type="range" id="volumeSlider" class="vertical-slider" min="0" max="1" step="0.01"
+      data-slider-direction="vertical" oninput="setVolume(this.value)" />
+    <button class="toggle-button" name="volume-lock" onclick="toggleButton(this)">
+      VOLUME
+    </button>
+  </div>
+  <!-- Volume: -->
+  <div id="volume"></div>
+  <!-- Tempo: -->
+  <div id="tempo"></div>
+
+  <script src="../js/display-data.js"></script>
+  <script src="../js/control-tempo.js"></script>
+  <script src="../js/control-volume.js"></script>
+  <script src="../js/play-file.js"></script>
+  <script src="../js/event-handlers.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+
 </html>

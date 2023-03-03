@@ -3,6 +3,10 @@ button {
   margin: 15px;
 }
 
+.display-top {
+  text-align: center;
+}
+
 .toggle-button {
   width: 200px;
   height: 200px;
@@ -40,9 +44,4 @@ button {
   transform: rotate(-90deg);
   width: 200px;
   margin-top: 40px;
-}
-.version-number {
-  font-size: large;
-  font-weight: bold;
-  margin-bottom: 1em;
 }
