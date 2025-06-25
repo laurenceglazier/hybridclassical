@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hybrid Classical – Gesture Toggle + Dead Zone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #111;
+      color: #eee;
+    }
+
+    .logo-and-version-container {
+    text-align: center;
+    }
+
+    .logo-container img {
+      max-width: 50%;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    input[type="file"], input[type="range"], button {
+      margin-top: 1em;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    #log, #rateDisplay {
+      white-space: pre-wrap;
+      font-family: monospace;
+      background: #222;
+      padding: 1em;
+      border-radius: 8px;
+      margin-top: 1em;
+    }
+    audio {
+      margin-top: 1em;
+      width: 100%;
+    }
+    #gestureButton {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #gestureButton:hover {
+      background-color: #555;
+    }
+    #tempoControl {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 1em;
+    }
+    #tempoControl button {
+      min-width: 2.5em;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #tempoControl button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-and-version-container">
+
+    <div class="logo-container">
+
+        <img
+            src='data:image/png;base64,
+        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' />
+
+    </div>
+
+    <div class="version-container">
+
+    </div>
+
+  </div>
+
+  <h1>Hybrid Classical – Tempo Control</h1>
+  <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
+
+  <input type="file" id="audioInput" accept="audio/*, .mp3">
+  <audio id="audioPlayer" controls></audio>
+
+  <div id="tempoControl">
+    <button id="tempoDown">–</button>
+    <input type="range" id="tempoSlider" min="0.5" max="2" step="0.01" value="1.0">
+    <button id="tempoUp">+</button>
+  </div>
+  <div id="rateDisplay">1.00×</div>
+  <button id="gestureButton">Enable Gesture Control</button>
+  <div id="log"></div>
+
+  <script>
+    const audioInput = document.getElementById('audioInput');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const tempoSlider = document.getElementById('tempoSlider');
+    const rateDisplay = document.getElementById('rateDisplay');
+    const gestureButton = document.getElementById('gestureButton');
+    const log = document.getElementById('log');
+    const tempoUp = document.getElementById('tempoUp');
+    const tempoDown = document.getElementById('tempoDown');
+
+    const DEAD_ZONE = 5;
+    const GAMMA_MIN = -30;
+    const GAMMA_MAX = 30;
+    const RATE_MIN = 0.5;
+    const RATE_MAX = 2.0;
+    const UPDATE_INTERVAL = 100;
+    const NUDGE_STEP = 0.01;
+
+    let gestureEnabled = false;
+    let lastUpdateTime = 0;
+    let nudgeInterval = null;
+
+    function updatePlaybackRate(rate) {
+      audioPlayer.playbackRate = rate;
+      tempoSlider.value = rate.toFixed(2);
+      rateDisplay.textContent = rate.toFixed(2) + '×';
+    }
+
+    function adjustTempo(change) {
+      let newRate = parseFloat(tempoSlider.value) + change;
+      newRate = Math.max(RATE_MIN, Math.min(RATE_MAX, newRate));
+      updatePlaybackRate(newRate);
+    }
+
+    function startNudge(change) {
+      adjustTempo(change);
+      nudgeInterval = setInterval(() => adjustTempo(change), 100);
+    }
+
+    function stopNudge() {
+      clearInterval(nudgeInterval);
+    }
+
+    tempoUp.addEventListener('mousedown', () => startNudge(NUDGE_STEP));
+    tempoUp.addEventListener('touchstart', () => startNudge(NUDGE_STEP));
+    tempoDown.addEventListener('mousedown', () => startNudge(-NUDGE_STEP));
+    tempoDown.addEventListener('touchstart', () => startNudge(-NUDGE_STEP));
+    document.addEventListener('mouseup', stopNudge);
+    document.addEventListener('touchend', stopNudge);
+
+    
+
+    audioInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+        audioPlayer.playbackRate = 1.0;
+      }
+    });
+
+    tempoSlider.addEventListener('input', () => {
+      const rate = parseFloat(tempoSlider.value);
+      updatePlaybackRate(rate);
+    });
+
+    function calculatePlaybackRate(gamma) {
+      if (Math.abs(gamma) < DEAD_ZONE) return 1.0;
+      const clamped = Math.max(GAMMA_MIN, Math.min(GAMMA_MAX, gamma));
+      const percent = (clamped - GAMMA_MIN) / (GAMMA_MAX - GAMMA_MIN);
+      return RATE_MIN + (RATE_MAX - RATE_MIN) * percent;
+    }
+
+    function setupGestureControl() {
+      window.addEventListener('deviceorientation', (event) => {
+        const now = Date.now();
+        if (!gestureEnabled || now - lastUpdateTime < UPDATE_INTERVAL) return;
+
+        const gamma = event.gamma ?? 0;
+        const beta = event.beta ?? 0;
+        const rate = calculatePlaybackRate(gamma);
+        const rounded = rate.toFixed(2);
+
+        log.textContent =
+          `gamma: ${gamma.toFixed(2)}°
+` +
+          `beta:  ${beta.toFixed(2)}°
+` +
+          `mapped playbackRate: ${rounded}`;
+
+        updatePlaybackRate(rate);
+        lastUpdateTime = now;
+      });
+    }
+
+    gestureButton.addEventListener('click', () => {
+      if (!gestureEnabled) {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') {
+                gestureEnabled = true;
+                gestureButton.textContent = 'Disable Gesture Control';
+              }
+            })
+            .catch(err => console.error(err));
+        } else {
+          gestureEnabled = true;
+          gestureButton.textContent = 'Disable Gesture Control';
+        }
+      } else {
+        gestureEnabled = false;
+        gestureButton.textContent = 'Enable Gesture Control';
+      }
+    });
+
+    setupGestureControl();
+  </script>
+</body>
+</html>
