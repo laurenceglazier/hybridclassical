@@ -12,7 +12,7 @@ List any software or tools that are required to run the project, such as program
 
 ### Installing
 
-Provide detailed instructions on how to set up the project on a local machine.
+Go to the link hybridclassical.ai in any browser on any device
 
 ## Running the tests
 
