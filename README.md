@@ -1,45 +1,64 @@
 # Hybrid Classical
 
-Virtual Conducting system
+A web app that lets users conduct music using gesture control on mobile and desktop devices.
 
-## Getting Started
+---
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+## 🔗 Access the App
 
-### Prerequisites
+Go to [https://hybridclassical.ai](https://hybridclassical.ai) in any browser on any device.
 
-List any software or tools that are required to run the project, such as programming languages, frameworks, or libraries.
+---
 
-### Installing
+## 🧪 Running Tests
 
-Go to the link hybridclassical.ai in any browser on any device
+Tests are currently manual. Load the app and verify:
+- Tempo slider and audio playback work smoothly
+- Gesture control (tilt) functions as expected on supported devices
 
-## Running the tests
+---
 
-Explain how to run any tests that have been created for the project.
+## 🚀 Deployment
 
-## Deployment
+For now, deployment is manual via GitHub Pages:
+1. Commit changes to `main`
+2. Ensure the correct entry point is `index.html`
+3. GitHub Pages will automatically serve the latest version
 
-Provide instructions on how to deploy the project to a live environment.
+---
 
-## Built With
+## 🛠️ Built With
 
-List any tools or technologies that were used to build the project.
+- HTML5 + JavaScript
+- Vibe coding (AI-assisted coding & testing)
+- Web Audio API
+- DeviceMotion & Accelerometer APIs
 
-## Contributing
+---
 
-Provide guidelines for how others can contribute to the project.
+## 🤝 Contributing
 
-## Authors
+We welcome ideas and feedback. For now, development is internal, but feel free to:
+- Raise Issues
+- Suggest improvements via Discussions (coming soon)
 
-- **Laurence Glazier** - _._
-- **Nicola Plant** - _._
-- **Simon Tait** - _._
+---
 
-## License
+## 👥 Authors
 
-🛡️ Licensed under the [GNU AGPLv3](LICENSE)
+- **Laurence Glazier**
+- **Nicola Plant**
+- **Simon Tait**
 
-## Acknowledgments
+---
 
-- Thank anyone who helped or inspired you to create the project.
+## 🛡️ License
+
+Licensed under the [GNU AGPLv3](LICENSE)
+
+---
+
+## 🙏 Acknowledgments
+
+- To all early testers and supporters of the project  
+- Special thanks to the OpenAI, GitHub, and Apple developer ecosystems
