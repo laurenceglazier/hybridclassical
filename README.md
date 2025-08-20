@@ -33,13 +33,12 @@ Provide guidelines for how others can contribute to the project.
 ## Authors
 
 - **Laurence Glazier** - _._
-- **Chat GPT3** - _._
 - **Nicola Plant** - _._
 - **Simon Tait** - _._
 
 ## License
 
-Include information about the license that the project is released under.
+🛡️ Licensed under the [GNU AGPLv3](LICENSE)
 
 ## Acknowledgments
 
