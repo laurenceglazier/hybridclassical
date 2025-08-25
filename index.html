@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="favicon.png">
-  <title>Hybrid Classical – Gesture Toggle + Dead Zone</title>
+  <title>Hybrid Classical – Virtual Conductor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -48,6 +48,20 @@
       margin-top: 1em;
       width: 100%;
     }
+
+.tempo-icon {
+  font-size: 1.8em;
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  margin: 0 0.6em;
+  line-height: 1;
+}
+
+.flipped {
+  transform: scaleX(-1);
+  display: inline-block;
+}
 
     #gestureButton {
       background-color: #ddd;
@@ -152,16 +166,28 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
     </div>
 
   </div>
-  <h1>Hybrid Classical – Tempo Control</h1>
+  <h1>Hybrid Classical – Virtual Conductor</h1>
   <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
-  <input type="file" id="audioInput" accept="audio/*, .mp3">
+
+  <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em; background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
+    🎵 Choose Music
+  </label>
+  <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
+
+
   <audio id="audioPlayer" controls></audio>
 
+<!-- Stopped here: emoji layout tweak in progress -->
+ 
   <div id="tempoControl">
-    <button id="tempoDown">–</button>
-    <input type="range" id="tempoSlider" min="0.5" max="2" step="0.01" value="1.0">
-    <button id="tempoUp">+</button>
+
+    <span class="tempo-icon">🚶‍♂️</span>
+<button id="tempoDown">–</button>
+<input type="range" id="tempoSlider" min="0.5" max="2" step="0.01" value="1.0">
+<button id="tempoUp">+</button>
+<span class="tempo-icon flipped">🏃‍♂️</span>
+
   </div>
   <div id="rateDisplay">1.00×</div>
   <button id="gestureButton">Enable Gesture Control</button>
