@@ -328,29 +328,5 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
     <strong>Tip:</strong> On your phone, tap Share → <em>Add to Home Screen</em> to save this app locally.
   </p>
 </section>
-<script>
-(function () {
-  const player = document.querySelector('audio');
-  if (!player) return;
-
-  function loadTrackFromURL(url){
-    try {
-      player.crossOrigin = 'anonymous';
-      player.src = url;
-      player.load();
-      player.play().catch(()=>{});
-    } catch(e){ console.error('Failed to load track:', e); }
-  }
-
-  const p = new URLSearchParams(location.search);
-  const track = p.get('track');
-  if (track) {
-    loadTrackFromURL(decodeURIComponent(track));
-  }
-
-  // Optional: expose for reuse
-  window.loadTrackFromURL = loadTrackFromURL;
-})();
-</script>
 </body>
 </html>
