@@ -170,9 +170,27 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
 
-  <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em; background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
-    🎵 Choose Music
-  </label>
+
+<!-- Local file chooser -->
+<label for="audioInput"
+       style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
+              background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
+📂 Choose Music
+</label>
+<input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
+
+<!-- Online library button -->
+<a href="https://laurenceglazier.github.io/hc-tracks/"
+   target="_blank" rel="noopener"
+   style="display:inline-block;margin-top:1em;margin-left:.5em;
+          padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
+          text-decoration:none;cursor:pointer;border:none;">
+  🌐 Open from Internet
+</a>
+
+
+
+
   <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
 
 
@@ -214,7 +232,14 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
     let gestureEnabled = false;
     let lastUpdateTime = 0;
     let nudgeInterval = null;
+    </script>
 
+    <script>
+  document.getElementById("openLibrary").addEventListener("click", function() {
+    window.open("https://laurenceglazier.github.io/hc-tracks/", "_blank");
+  });
+
+    
     function updatePlaybackRate(rate) {
       audioPlayer.playbackRate = rate;
       tempoSlider.value = rate.toFixed(2);
@@ -328,5 +353,22 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
     <strong>Tip:</strong> On your phone, tap Share → <em>Add to Home Screen</em> to save this app locally.
   </p>
 </section>
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const track = params.get('track');
+  if (!track) return;
+
+  const player = document.querySelector('audio');
+  if (!player) return;
+
+  const url = decodeURIComponent(track);
+  player.crossOrigin = 'anonymous';
+  player.src = url;
+  player.load();
+  // Try autoplay, but safe if blocked:
+  player.play().catch(() => {});
+})();
+</script>
 </body>
 </html>
