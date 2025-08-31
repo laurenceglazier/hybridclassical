@@ -170,13 +170,31 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
 
-  <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em; background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
-    🎵 Choose Music
-  </label>
-  <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
+
+<!-- Local file chooser -->
+<label for="audioInput"
+       style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
+              background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
+📂 Choose Music
+</label>
+<input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
+
+<!-- Online library button -->
+<a href="https://laurenceglazier.github.io/hc-tracks/"
+   target="_blank" rel="noopener"
+   style="display:inline-block;margin-top:1em;margin-left:.5em;
+          padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
+          text-decoration:none;cursor:pointer;border:none;">
+  🌐 Open from Internet
+</a>
+
+
+
+
 
 
   <audio id="audioPlayer" controls></audio>
+  <div id="currentTrack" style="margin:.5rem 0; opacity:.85;"></div>
 
 <!-- Stopped here: emoji layout tweak in progress -->
  
@@ -193,124 +211,9 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   <button id="gestureButton">Enable Gesture Control</button>
   <div id="log"></div>
 
-  <script>
-    const audioInput = document.getElementById('audioInput');
-    const audioPlayer = document.getElementById('audioPlayer');
-    const tempoSlider = document.getElementById('tempoSlider');
-    const rateDisplay = document.getElementById('rateDisplay');
-    const gestureButton = document.getElementById('gestureButton');
-    const log = document.getElementById('log');
-    const tempoUp = document.getElementById('tempoUp');
-    const tempoDown = document.getElementById('tempoDown');
 
-    const DEAD_ZONE = 5;
-    const GAMMA_MIN = -30;
-    const GAMMA_MAX = 30;
-    const RATE_MIN = 0.5;
-    const RATE_MAX = 2.0;
-    const UPDATE_INTERVAL = 100;
-    const NUDGE_STEP = 0.01;
 
-    let gestureEnabled = false;
-    let lastUpdateTime = 0;
-    let nudgeInterval = null;
 
-    function updatePlaybackRate(rate) {
-      audioPlayer.playbackRate = rate;
-      tempoSlider.value = rate.toFixed(2);
-      rateDisplay.textContent = rate.toFixed(2) + '×';
-    }
-
-    function adjustTempo(change) {
-      let newRate = parseFloat(tempoSlider.value) + change;
-      newRate = Math.max(RATE_MIN, Math.min(RATE_MAX, newRate));
-      updatePlaybackRate(newRate);
-    }
-
-    function startNudge(change) {
-      adjustTempo(change);
-      nudgeInterval = setInterval(() => adjustTempo(change), 100);
-    }
-
-    function stopNudge() {
-      clearInterval(nudgeInterval);
-    }
-
-    tempoUp.addEventListener('mousedown', () => startNudge(NUDGE_STEP));
-    tempoUp.addEventListener('touchstart', () => startNudge(NUDGE_STEP));
-    tempoDown.addEventListener('mousedown', () => startNudge(-NUDGE_STEP));
-    tempoDown.addEventListener('touchstart', () => startNudge(-NUDGE_STEP));
-    document.addEventListener('mouseup', stopNudge);
-    document.addEventListener('touchend', stopNudge);
-
-    
-
-    audioInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        audioPlayer.src = url;
-        audioPlayer.playbackRate = 1.0;
-      }
-    });
-
-    tempoSlider.addEventListener('input', () => {
-      const rate = parseFloat(tempoSlider.value);
-      updatePlaybackRate(rate);
-    });
-
-    function calculatePlaybackRate(gamma) {
-      if (Math.abs(gamma) < DEAD_ZONE) return 1.0;
-      const clamped = Math.max(GAMMA_MIN, Math.min(GAMMA_MAX, gamma));
-      const percent = (clamped - GAMMA_MIN) / (GAMMA_MAX - GAMMA_MIN);
-      return RATE_MIN + (RATE_MAX - RATE_MIN) * percent;
-    }
-
-    function setupGestureControl() {
-      window.addEventListener('deviceorientation', (event) => {
-        const now = Date.now();
-        if (!gestureEnabled || now - lastUpdateTime < UPDATE_INTERVAL) return;
-
-        const gamma = event.gamma ?? 0;
-        const beta = event.beta ?? 0;
-        const rate = calculatePlaybackRate(gamma);
-        const rounded = rate.toFixed(2);
-
-        log.textContent =
-          `gamma: ${gamma.toFixed(2)}°
-` +
-          `beta:  ${beta.toFixed(2)}°
-` +
-          `mapped playbackRate: ${rounded}`;
-
-        updatePlaybackRate(rate);
-        lastUpdateTime = now;
-      });
-    }
-
-    gestureButton.addEventListener('click', () => {
-      if (!gestureEnabled) {
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(response => {
-              if (response === 'granted') {
-                gestureEnabled = true;
-                gestureButton.textContent = 'Disable Gesture Control';
-              }
-            })
-            .catch(err => console.error(err));
-        } else {
-          gestureEnabled = true;
-          gestureButton.textContent = 'Disable Gesture Control';
-        }
-      } else {
-        gestureEnabled = false;
-        gestureButton.textContent = 'Enable Gesture Control';
-      }
-    });
-
-    setupGestureControl();
-  </script>
 <section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
   <h2 style="margin-bottom: 1em;">Share Hybrid Classical</h2>
 
@@ -328,5 +231,133 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
     <strong>Tip:</strong> On your phone, tap Share → <em>Add to Home Screen</em> to save this app locally.
   </p>
 </section>
+
+<script>
+  const audioInput = document.getElementById('audioInput');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const tempoSlider = document.getElementById('tempoSlider');
+  const rateDisplay = document.getElementById('rateDisplay');
+  const gestureButton = document.getElementById('gestureButton');
+  const log = document.getElementById('log');
+  const tempoUp = document.getElementById('tempoUp');
+  const tempoDown = document.getElementById('tempoDown');
+
+  const DEAD_ZONE = 5;
+  const GAMMA_MIN = -30;
+  const GAMMA_MAX = 30;
+  const RATE_MIN = 0.5;
+  const RATE_MAX = 2.0;
+  const UPDATE_INTERVAL = 100;
+  const NUDGE_STEP = 0.01;
+
+  let gestureEnabled = false;
+  let lastUpdateTime = 0;
+  let nudgeInterval = null;
+
+  function updatePlaybackRate(rate) {
+    audioPlayer.playbackRate = rate;
+    tempoSlider.value = rate.toFixed(2);
+    rateDisplay.textContent = rate.toFixed(2) + '×';
+  }
+
+  function adjustTempo(change) {
+    let newRate = parseFloat(tempoSlider.value) + change;
+    newRate = Math.max(RATE_MIN, Math.min(RATE_MAX, newRate));
+    updatePlaybackRate(newRate);
+  }
+
+  function startNudge(change) {
+    adjustTempo(change);
+    nudgeInterval = setInterval(() => adjustTempo(change), 100);
+  }
+
+  function stopNudge() {
+    clearInterval(nudgeInterval);
+  }
+
+  tempoUp.addEventListener('mousedown', () => startNudge(NUDGE_STEP));
+  tempoUp.addEventListener('touchstart', () => startNudge(NUDGE_STEP));
+  tempoDown.addEventListener('mousedown', () => startNudge(-NUDGE_STEP));
+  tempoDown.addEventListener('touchstart', () => startNudge(-NUDGE_STEP));
+  document.addEventListener('mouseup', stopNudge);
+  document.addEventListener('touchend', stopNudge);
+
+  audioInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      audioPlayer.src = url;
+      audioPlayer.playbackRate = 1.0;
+    }
+  });
+
+  tempoSlider.addEventListener('input', () => {
+    const rate = parseFloat(tempoSlider.value);
+    updatePlaybackRate(rate);
+  });
+
+  function calculatePlaybackRate(gamma) {
+    if (Math.abs(gamma) < DEAD_ZONE) return 1.0;
+    const clamped = Math.max(GAMMA_MIN, Math.min(GAMMA_MAX, gamma));
+    const percent = (clamped - GAMMA_MIN) / (GAMMA_MAX - GAMMA_MIN);
+    return RATE_MIN + (RATE_MAX - RATE_MIN) * percent;
+  }
+
+  function setupGestureControl() {
+    window.addEventListener('deviceorientation', (event) => {
+      const now = Date.now();
+      if (!gestureEnabled || now - lastUpdateTime < UPDATE_INTERVAL) return;
+
+      const gamma = event.gamma ?? 0;
+      const beta = event.beta ?? 0;
+      const rate = calculatePlaybackRate(gamma);
+      const rounded = rate.toFixed(2);
+
+      log.textContent =
+        `gamma: ${gamma.toFixed(2)}°\n` +
+        `beta:  ${beta.toFixed(2)}°\n` +
+        `mapped playbackRate: ${rounded}`;
+
+      updatePlaybackRate(rate);
+      lastUpdateTime = now;
+    });
+  }
+
+  gestureButton.addEventListener('click', () => {
+    if (!gestureEnabled) {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(response => {
+            if (response === 'granted') {
+              gestureEnabled = true;
+              gestureButton.textContent = 'Disable Gesture Control';
+            }
+          })
+          .catch(err => console.error(err));
+      } else {
+        gestureEnabled = true;
+        gestureButton.textContent = 'Disable Gesture Control';
+      }
+    } else {
+      gestureEnabled = false;
+      gestureButton.textContent = 'Enable Gesture Control';
+    }
+  });
+
+  setupGestureControl();
+
+  // Support ?track= URL param (for deep linking)
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const track = params.get('track');
+    if (!track) return;
+
+    const url = decodeURIComponent(track);
+    audioPlayer.crossOrigin = 'anonymous';
+    audioPlayer.src = url;
+    audioPlayer.load();
+    audioPlayer.play().catch(() => {});
+  })();
+</script>
 </body>
 </html>
