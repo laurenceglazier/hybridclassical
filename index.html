@@ -283,13 +283,15 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   document.addEventListener('touchend', stopNudge);
 
   audioInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      audioPlayer.src = url;
-      audioPlayer.playbackRate = 1.0;
-    }
-  });
+  const file = event.target.files?.[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    audioPlayer.src = url;
+    audioPlayer.playbackRate = 1.0;
+    updatePlaybackRate(1.0); // reset slider, label, and playbackRate
+    showCurrentTrack(file.name);
+  }
+});
 
   tempoSlider.addEventListener('input', () => {
     const rate = parseFloat(tempoSlider.value);
@@ -347,17 +349,31 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   setupGestureControl();
 
   // Support ?track= URL param (for deep linking)
-  (function () {
-    const params = new URLSearchParams(location.search);
-    const track = params.get('track');
-    if (!track) return;
 
-    const url = decodeURIComponent(track);
-    audioPlayer.crossOrigin = 'anonymous';
-    audioPlayer.src = url;
-    audioPlayer.load();
-    audioPlayer.play().catch(() => {});
-  })();
+  (function () {
+  const params = new URLSearchParams(location.search);
+  const track = params.get('track');
+  if (!track) return;
+
+  const url = decodeURIComponent(track);
+  audioPlayer.crossOrigin = 'anonymous';
+  audioPlayer.src = url;
+  audioPlayer.load();
+  updatePlaybackRate(1.0); // reset slider, label, and playbackRate
+
+  // Show filename portion
+  const nameOnly = url.split('/').pop() || url;
+  showCurrentTrack(nameOnly);
+
+  audioPlayer.play().catch(() => {});
+})();
+
+  // Helper: show "Now playing"
+function showCurrentTrack(name) {
+  const el = document.getElementById('currentTrack');
+  if (!el) return;
+  el.textContent = name ? `Now playing: ${name}` : '';
+}
 </script>
 </body>
 </html>
