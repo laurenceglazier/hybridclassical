@@ -1,26 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Redirecting…</title>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
-    // Map short IDs to full MP3 URLs
-    const tracks = {
-      "frere-jacques": "https://laurenceglazier.github.io/hc-tracks/audio/frere_jacques.mp3"
-      // add more tracks here later
-    };
-
-    if (id && tracks[id]) {
-      window.location.href = `/?track=${encodeURIComponent(tracks[id])}`;
-    } else {
-      document.body.innerHTML = "<p>Track not found.</p>";
-    }
-  </script>
-</head>
-<body>
-  <p>Redirecting…</p>
-</body>
-</html>
+<!doctype html>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<script>
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) {
+    // Keep the nice, bookmarkable URL with just ?id=
+    location.replace('/?id=' + encodeURIComponent(id));
+  } else {
+    document.body.textContent = 'Track id missing.';
+  }
+</script>

@@ -375,5 +375,36 @@ function showCurrentTrack(name) {
   el.textContent = name ? `Now playing: ${name}` : '';
 }
 </script>
+<script>
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const idRaw = params.get('id');
+    if (!idRaw) return;
+  
+    // Allow subfolders and .mp3 filenames; strip unsafe chars
+    const id = idRaw.trim().replace(/[^a-zA-Z0-9/_\-.]/g, '');
+    if (!id || !id.endsWith('.mp3')) return;
+  
+    // Base where your MP3s live today (can change later without changing links)
+    const BASE = 'https://laurenceglazier.github.io/hc-tracks/audio/';
+    const url = BASE + id;
+  
+    const audio = document.querySelector('audio');
+    if (!audio) return;
+  
+    audio.crossOrigin = 'anonymous';
+    audio.src = url;
+    try { audio.load(); } catch (e) {}
+    // Optional: auto-play
+    // audio.play().catch(()=>{});
+  
+    // Keep the nice ?id=... URL (no username or full path shown)
+    history.replaceState(null, '', '/?id=' + encodeURIComponent(id));
+  
+    // Optional: update a label
+    const label = document.getElementById('currentTrack');
+    if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
+  })();
+  </script>
 </body>
 </html>
