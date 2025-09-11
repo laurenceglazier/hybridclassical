@@ -405,5 +405,15 @@ function showCurrentTrack(name) {
     if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
   })();
   </script>
+  <script>
+    // Count app visit
+    fetch('https://api.countapi.xyz/hit/hybridclassical.ai/app').catch(()=>{});
+  
+    // Count per-track selection (id includes .mp3 in your setup)
+    const id = new URLSearchParams(location.search).get('id');
+    if (id) {
+      fetch('https://api.countapi.xyz/hit/hybridclassical.ai/track/' + encodeURIComponent(id)).catch(()=>{});
+    }
+  </script>
 </body>
 </html>
