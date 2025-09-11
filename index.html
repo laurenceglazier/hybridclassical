@@ -405,22 +405,5 @@ function showCurrentTrack(name) {
     if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
   })();
   </script>
-  <script>
-    // Anonymous app visit counter
-    (function () {
-      // App counter
-      new Image().src =
-        "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=" +
-        encodeURIComponent("https://www.hybridclassical.ai/app");
-  
-      // Per-track counter (id already includes .mp3 in your setup)
-      const id = new URLSearchParams(location.search).get("id");
-      if (id) {
-        new Image().src =
-          "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=" +
-          encodeURIComponent("https://www.hybridclassical.ai/track/" + id);
-      }
-    })();
-  </script>
 </body>
 </html>
