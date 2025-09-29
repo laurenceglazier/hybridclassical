@@ -136,6 +136,23 @@
 @media (max-width: 340px){
   :root{ --brandHeight: 148px; }
 }
+/* Large, friendly Play/Pause button */
+.hc-big {
+  font-size: 2.4rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  line-height: 1;
+  cursor: pointer;
+  margin-bottom: 10px; /* space above the audio bar */
+}
+
+/* Make it larger on touch devices (phones, Vision Pro, tablets) */
+@media (pointer: coarse) {
+  .hc-big {
+    font-size: 3rem;
+    padding: 0.75rem 1.1rem;
+  }
+}
   </style>
 </head>
 <body>
@@ -179,8 +196,17 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
 </label>
 <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
 
-<!-- Online library button -->
+<!-- Online library button 
 <a href="https://www.hybridclassical.ai/library/"
+   target="_blank" rel="noopener"
+   style="display:inline-block;margin-top:1em;margin-left:.5em;
+          padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
+          text-decoration:none;cursor:pointer;border:none;">
+  🌐 Open from Internet
+</a>
+-->
+<a id="openInternet" 
+   href="https://www.hybridclassical.ai/library/" 
    target="_blank" rel="noopener"
    style="display:inline-block;margin-top:1em;margin-left:.5em;
           padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
@@ -190,8 +216,7 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
 
 
 
-
-
+  <button id="bigPlay" class="hc-big" aria-label="Play">▶︎</button>
   <audio id="audioPlayer" controls></audio>
   <div id="currentTrack" style="margin:.5rem 0; opacity:.85;"></div>
 
@@ -404,6 +429,147 @@ function showCurrentTrack(name) {
     const label = document.getElementById('currentTrack');
     if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
   })();
-  </script>
+  (function(){
+  const audio = document.getElementById('audioPlayer');
+  const big   = document.getElementById('bigPlay');
+  if (!audio || !big) return;
+
+  function sync() {
+    big.textContent = audio.paused ? '▶︎' : '⏸';
+  }
+
+  big.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(()=>{});
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener('play',  sync);
+  audio.addEventListener('pause', sync);
+
+  sync(); // initialise button icon
+})();
+// --- Big Play/Pause controller that survives DOM changes ---
+(function () {
+  let current; // whichever element is active: audio or video
+
+  function sync() {
+    const big = document.getElementById('bigPlay');
+    if (!big || !current) return;
+    big.textContent = current.paused ? '▶︎' : '⏸';
+  }
+
+  function bindTo(el) {
+    if (!el) return;
+    // remove old listeners if we had a previous current
+    if (current) {
+      current.removeEventListener('play',  sync);
+      current.removeEventListener('pause', sync);
+    }
+    current = el;
+    current.addEventListener('play',  sync);
+    current.addEventListener('pause', sync);
+    sync();
+  }
+
+  // Click handler (always looks up the current element)
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'bigPlay' && current) {
+      if (current.paused) current.play().catch(()=>{}); else current.pause();
+    }
+  });
+
+  // Re-bind if your app swaps/rebuilds the player nodes
+  const mo = new MutationObserver(() => {
+    // Prefer #videoPlayer if visible, else #audioPlayer
+    const v = document.getElementById('videoPlayer');
+    const a = document.getElementById('audioPlayer');
+    const visible = v && v.style.display !== 'none' ? v : a;
+    if (visible && visible !== current) bindTo(visible);
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
+
+  // Initial bind (in case elements already exist)
+  bindTo(document.getElementById('videoPlayer') || document.getElementById('audioPlayer'));
+})();
+(function () {
+  // Elements
+  const big = document.getElementById('bigPlay');
+  if (!big) return;
+
+  const getAudio = () => document.getElementById('audioPlayer');
+  let audio = null;
+
+  // Keep pitch constant across tempo changes (harmless if already true)
+  function enforcePitch(el){
+    try { el.preservesPitch = true; } catch(_) {}
+    try { el.webkitPreservesPitch = true; } catch(_) {}
+    try { el.mozPreservesPitch = true; } catch(_) {}
+  }
+
+  // Update the button symbol to match the player state
+  function sync(){
+    if (!audio) return;
+    big.textContent = audio.paused ? '▶︎' : '⏸';
+  }
+
+  // (Re)bind listeners to the current audio element
+  function bind(){
+    const el = getAudio();
+    if (el === audio) return;
+
+    if (audio){
+      audio.removeEventListener('play',  sync);
+      audio.removeEventListener('pause', sync);
+    }
+    audio = el;
+    if (!audio) return;
+
+    enforcePitch(audio);
+    audio.addEventListener('play',  sync);
+    audio.addEventListener('pause', sync);
+    sync();
+  }
+
+  // Big button click toggles playback (safe for autoplay policies)
+  big.addEventListener('click', () => {
+    bind(); // in case the audio element was replaced
+    if (!audio) return;
+    audio.paused ? audio.play().catch(()=>{}) : audio.pause();
+  });
+
+  // Initial bind
+  bind();
+
+  // If your "Open from Internet" code replaces DOM, rebind automatically
+  const mo = new MutationObserver(bind);
+  mo.observe(document.body, { childList: true, subtree: true });
+
+  // Resync symbol on tab visibility changes (belt-and-braces)
+  document.addEventListener('visibilitychange', sync);
+})();
+
+      /* Dev override: intercept "Open from Internet" when testing locally */
+      (function(){
+        const isLocal = /^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname);
+        if (!isLocal) return; // Only run on Live Server
+      
+        const link = document.getElementById('openInternet');
+        const audio = document.getElementById('audioPlayer');
+        if (!link || !audio) return;
+      
+        link.addEventListener('click', (e) => {
+          e.preventDefault(); // stop opening new tab
+          const url = prompt('Paste the full MP3 URL to load here:');
+          if (!url) return;
+          try { audio.preservesPitch = audio.webkitPreservesPitch = audio.mozPreservesPitch = true; } catch(_) {}
+          audio.src = url;
+          audio.load();
+          // The big button already controls this audio
+        });
+      })();
+      </script>
 </body>
 </html>
