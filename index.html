@@ -153,6 +153,8 @@
     padding: 0.75rem 1.1rem;
   }
 }
+.is-disabled { pointer-events: none; opacity: .55; }
+[aria-disabled="true"] { pointer-events: none; opacity: .55; }
   </style>
 </head>
 <body>
@@ -188,11 +190,13 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
 
 
 
+Choose Music:
+
 <!-- Local file chooser -->
 <label for="audioInput"
        style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
               background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
-📂 Choose Music
+📂 Local
 </label>
 <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
 
@@ -205,19 +209,30 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   🌐 Open from Internet
 </a>
 -->
-<a id="openInternet" 
-   href="https://www.hybridclassical.ai/library/" 
+
+<!-- Opens the curated library (existing behavior) -->
+<a id="openLibrary"
+   href="https://www.hybridclassical.ai/library/"
    target="_blank" rel="noopener"
    style="display:inline-block;margin-top:1em;margin-left:.5em;
           padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
-          text-decoration:none;cursor:pointer;border:none;">
-  🌐 Open from Internet
+          text-decoration:none;cursor:pointer;">
+  🌐 Internet Library
 </a>
+
+<!-- Allows direct URL input -->
+<button id="openUrl" 
+   style="margin-left:.5em;padding:.5em 1em;background:#666;
+          color:#fff;border:none;border-radius:5px;cursor:pointer;">
+  🔗 URL
+</button>
 
 
 
   <button id="bigPlay" class="hc-big" aria-label="Play">▶︎</button>
   <audio id="audioPlayer" controls></audio>
+  <video id="videoPlayer" controls playsinline
+       style="display:none;width:100%;background:#000"></video>
   <div id="currentTrack" style="margin:.5rem 0; opacity:.85;"></div>
 
 <!-- Stopped here: emoji layout tweak in progress -->
@@ -306,16 +321,29 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   document.addEventListener('mouseup', stopNudge);
   document.addEventListener('touchend', stopNudge);
 
-  audioInput.addEventListener('change', (event) => {
+
+
+
+audioInput.addEventListener('change', (event) => {
   const file = event.target.files?.[0];
-  if (file) {
-    const url = URL.createObjectURL(file);
-    audioPlayer.src = url;
-    audioPlayer.playbackRate = 1.0;
-    updatePlaybackRate(1.0); // reset slider, label, and playbackRate
-    showCurrentTrack(file.name);
+  if (!file) return;
+
+  const url  = URL.createObjectURL(file);
+  const name = file.name || '';
+
+  // Route by extension: MP4 → video, otherwise → audio
+  if (/\.mp4$/i.test(name)) {
+    window.hcUseVideo(url);      // show and load video
+  } else {
+    window.hcUseAudio
+      ? window.hcUseAudio(url)   // call helper if defined
+      : (audioPlayer.src = url, audioPlayer.load());
   }
+
+  updatePlaybackRate(1.0);
+  showCurrentTrack(name);
 });
+
 
   tempoSlider.addEventListener('input', () => {
     const rate = parseFloat(tempoSlider.value);
@@ -438,13 +466,6 @@ function showCurrentTrack(name) {
     big.textContent = audio.paused ? '▶︎' : '⏸';
   }
 
-  big.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play().catch(()=>{});
-    } else {
-      audio.pause();
-    }
-  });
 
   audio.addEventListener('play',  sync);
   audio.addEventListener('pause', sync);
@@ -533,13 +554,6 @@ function showCurrentTrack(name) {
     sync();
   }
 
-  // Big button click toggles playback (safe for autoplay policies)
-  big.addEventListener('click', () => {
-    bind(); // in case the audio element was replaced
-    if (!audio) return;
-    audio.paused ? audio.play().catch(()=>{}) : audio.pause();
-  });
-
   // Initial bind
   bind();
 
@@ -571,5 +585,287 @@ function showCurrentTrack(name) {
         });
       })();
       </script>
+      <script>
+        (function () {
+          function useAudioDirect(url){
+            const a = document.getElementById('audioPlayer');
+            const v = document.getElementById('videoPlayer');
+            try { v && v.pause(); } catch(_){}
+            if (v) v.style.display = 'none';
+            if (a) {
+              a.style.display = '';
+              a.src = url;
+              try { a.load(); } catch(_){}
+            }
+            // If helpers exist, let them (re)bind things too
+            if (window.hcUseAudio) window.hcUseAudio(url);
+          }
+        
+          function useVideoDirect(url){
+            const a = document.getElementById('audioPlayer');
+            const v = document.getElementById('videoPlayer');
+            try { a && a.pause(); } catch(_){}
+            if (a) a.style.display = 'none';
+            if (v) {
+              v.style.display = '';
+              v.removeAttribute('height');
+              v.src = url;
+              try { v.load(); } catch(_){}
+            }
+            if (window.hcUseVideo) window.hcUseVideo(url);
+          }
+        
+          function handleOpenUrl(){
+            const url = prompt('Paste an MP3 or MP4 URL…');
+            if (!url) return;
+            (/\.mp4(\?|#|$)/i.test(url) ? useVideoDirect : useAudioDirect)(url);
+          }
+        
+          // Event delegation = works regardless of DOM order
+          document.addEventListener('click', function(e){
+            if (e.target && e.target.id === 'openUrl') {
+              handleOpenUrl();
+            }
+          });
+        })();
+        </script>
+        <script>
+          (function(){
+            const audio   = document.getElementById('audioPlayer');
+            const video   = document.getElementById('videoPlayer'); // ok if absent for now
+            const elLocal = document.querySelector('label[for="audioInput"]');
+            const elLib   = document.getElementById('openLibrary');
+            const elUrl   = document.getElementById('openUrl');
+          
+            function setChoosersEnabled(enabled){
+              [elLocal, elLib, elUrl].forEach(el => {
+                if (!el) return;
+                if (el.tagName === 'BUTTON') el.disabled = !enabled;
+                el.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+                el.classList.toggle('is-disabled', !enabled);
+              });
+            }
+          
+            function wire(el){
+              if (!el) return;
+              el.addEventListener('play',  () => setChoosersEnabled(false));
+              el.addEventListener('pause', () => setChoosersEnabled(true));
+              el.addEventListener('ended', () => setChoosersEnabled(true));
+            }
+          
+            wire(audio);
+            wire(video);
+          })();
+          </script>
+          <script>
+            /* MP4 add-on: activates <video>, routes Big Play to video when active, mirrors tempo */
+            (function () {
+              const audio = document.getElementById('audioPlayer');
+              const video = document.getElementById('videoPlayer');
+              const big   = document.getElementById('bigPlay');
+              const tempo = document.getElementById('tempoSlider');
+              if (!audio || !video || !big) return;
+            
+              function keepPitch(el){
+                try { el.preservesPitch = true; } catch(_) {}
+                try { el.webkitPreservesPitch = true; } catch(_) {}
+                try { el.mozPreservesPitch = true; } catch(_) {}
+              }
+              keepPitch(audio); keepPitch(video);
+            
+              let current = 'audio';
+            
+              function activateVideo() {
+                current = 'video';
+                try { audio.pause(); } catch(_){}
+                audio.style.display = 'none';
+                video.style.display = '';
+              }
+              function activateAudio() {
+                current = 'audio';
+                try { video.pause(); } catch(_){}
+                video.style.display = 'none';
+                audio.style.display = '';
+              }
+            
+              // Public helper so we can load MP4s anywhere
+              window.hcUseVideo = function(url){
+                activateVideo();
+                video.src = url;
+                try { video.load(); } catch(_){}
+              };
+            
+              // If something starts playing, remember which is active
+              audio.addEventListener('play', () => current = 'audio');
+              video.addEventListener('play', () => current = 'video');
+            
+            
+              // Mirror tempo to video when video is active
+              if (tempo) {
+                tempo.addEventListener('input', () => {
+                  if (current === 'video') {
+                    const r = parseFloat(tempo.value) || 1;
+                    video.playbackRate = r;
+                  }
+                });
+              }
+            })();
+            </script>
+            <script>
+              // Install minimal fallbacks if the helpers aren't defined yet.
+              // Safe to keep: if real versions exist, these won't overwrite them.
+              if (typeof window.hcUseAudio !== 'function') {
+                window.hcUseAudio = function(url){
+                  const a = document.getElementById('audioPlayer');
+                  const v = document.getElementById('videoPlayer');
+                  try { v && v.pause(); } catch(_){}
+                  if (v) v.style.display = 'none';
+                  if (!a) return;
+                  a.style.display = '';
+                  a.src = url;
+                  try { a.load(); } catch(_){}
+                };
+                console.log('[hc] fallback hcUseAudio installed');
+              }
+              
+              if (typeof window.hcUseVideo !== 'function') {
+                window.hcUseVideo = function(url){
+                  const a = document.getElementById('audioPlayer');
+                  const v = document.getElementById('videoPlayer');
+                  try { a && a.pause(); } catch(_){}
+                  if (a) a.style.display = 'none';
+                  if (!v) return;
+                  v.style.display = '';
+                  v.removeAttribute('height'); // avoid tiny picture
+                  v.src = url;
+                  try { v.load(); } catch(_){}
+                };
+                console.log('[hc] fallback hcUseVideo installed');
+              }
+              </script>
+              <script>
+                /* Minimal, robust MP4 wiring: helpers + Big Play + tempo mirror */
+                (function () {
+                  const audio = document.getElementById('audioPlayer');
+                  const video = document.getElementById('videoPlayer');
+                  const big   = document.getElementById('bigPlay');
+                  const tempo = document.getElementById('tempoSlider');
+                  if (!audio || !video || !big) return;
+                
+                  // Keep pitch constant if the browser supports it
+                  function keepPitch(el){
+                    try { el.preservesPitch = true; } catch(_) {}
+                    try { el.webkitPreservesPitch = true; } catch(_) {}
+                    try { el.mozPreservesPitch = true; } catch(_) {}
+                  }
+                  keepPitch(audio); keepPitch(video);
+                
+                  // Track which element Big Play should control
+                  let current = 'audio';
+                
+                  function stopAll(){
+                  try { audio && audio.pause(); } catch(_){}
+                  try { video && video.pause(); } catch(_){}
+                  }
+
+
+
+                  function showAudio(){
+                    // stop + fully unload the video so its audio can't keep playing
+                    stopAll();
+                    if (video){
+                      video.removeAttribute('src');   // detach stream
+                      try { video.load(); } catch(_) {}
+                      video.style.display = 'none';
+                    }
+                    // show audio
+                    if (audio){
+                      audio.style.display = '';
+                    }
+                    current = 'audio';
+                  }
+            
+
+                  function showVideo(){
+                    // stop + fully unload the audio so it can't keep playing
+                    stopAll();
+                    if (audio){
+                      audio.removeAttribute('src');   // detach stream
+                      try { audio.load(); } catch(_) {}
+                      audio.style.display = 'none';
+                    }
+                    // show video
+                    if (video){
+                      video.style.display = '';
+                      video.removeAttribute('height'); // avoid tiny letterboxing
+                    }
+                    current = 'video';
+                  }
+
+
+                  
+                
+                  // Helpers used by "Open from URL" and the file picker
+ 
+
+                  window.hcUseAudio = function(url){
+                    showAudio();
+                    if (audio){
+                      audio.src = url;
+                      try { audio.load(); } catch(_) {}
+                    }
+                  };
+
+                  window.hcUseVideo = function(url){
+                    showVideo();
+                    if (video){
+                      video.src = url;
+                      try { video.load(); } catch(_) {}
+                    }
+                  }
+
+
+
+
+
+                
+                  // If either starts playing, remember which is active
+                  audio.addEventListener('play', () => current = 'audio');
+                  video.addEventListener('play', () => current = 'video');
+                
+
+                  // Mirror tempo to video when video is active (audio already handled elsewhere)
+                  if (tempo) {
+                    tempo.addEventListener('input', () => {
+                      if (current === 'video') {
+                        const r = parseFloat(tempo.value) || 1;
+                        video.playbackRate = r;
+                      }
+                    });
+                  }
+
+                  // Unified Big Play: always controls the active player (audio or video)
+                  big.addEventListener('click', function (e) {
+                    // prevent any older handlers from firing
+                    e.stopImmediatePropagation();
+
+                    if (current === 'video') {
+                      if (video.paused) { video.play().catch(()=>{}); } else { video.pause(); }
+                    } else {
+                      if (audio.paused) { audio.play().catch(()=>{}); } else { audio.pause(); }
+                    }
+
+                    // optional glyph sync
+                    try {
+                      const el = (current === 'video') ? video : audio;
+                      big.textContent = el.paused ? '▶︎' : '⏸';
+                    } catch(_) {}
+                  }, true); // capture phase
+
+
+
+
+                })();
+                </script>
 </body>
 </html>
