@@ -188,8 +188,6 @@ iVBORw0KGgoAAAANSUhEUgAAAEsAAABuCAMAAABY8R5dAAAC91BMVEUAAAABCQv///9OUFDc3t5QU1NN
   <h1>Hybrid Classical – Virtual Conductor</h1>
   <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
-
-
 Choose Music:
 
 <!-- Online library button 
@@ -282,7 +280,12 @@ Choose Music:
   🔗 URL
 </button>
 
-
+<!-- Status indicator for URL loading -->
+<div id="status" style="
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5em 0;
+"></div>
 
   <button id="bigPlay" class="hc-big" aria-label="Play">▶︎</button>
   <audio id="audioPlayer" controls></audio>
@@ -922,5 +925,63 @@ function showCurrentTrack(name) {
 
                 })();
                 </script>
+  <!-- URL loader and deep-link handler -->
+<script>
+  (function () {
+    const audioEl  = document.getElementById('audioPlayer');
+    const urlInput = document.getElementById('urlInput') || null;
+    const loadBtn  = document.getElementById('openUrl') || document.getElementById('loadFromUrl');
+    const statusEl = document.getElementById('status');
+  
+    if (!audioEl) return;
+  
+    async function setAudioSrc(url) {
+      try {
+        audioEl.crossOrigin = 'anonymous';
+        audioEl.src = url;
+        audioEl.load();
+        statusEl && (statusEl.textContent = 'Loaded from link');
+      } catch (e) {
+        console.warn('Direct src failed, trying fetch/blob fallback:', e);
+        try {
+          const res = await fetch(url, { mode: 'cors' });
+          const blob = await res.blob();
+          const obj = URL.createObjectURL(blob);
+          audioEl.src = obj;
+          audioEl.load();
+          statusEl && (statusEl.textContent = 'Loaded via blob');
+        } catch (e2) {
+          console.error('Both methods failed', e2);
+          statusEl && (statusEl.textContent = 'Failed to load link');
+        }
+      }
+    }
+  
+    // 1) Handle manual “Load URL” button clicks
+    if (loadBtn && urlInput) {
+      loadBtn.addEventListener('click', () => {
+        const raw = (urlInput.value || '').trim();
+        if (!raw) return;
+        setAudioSrc(raw);
+      });
+    }
+  
+    // 2) Auto-load via query string: ?u=<encoded full URL> or ?track=<filename.mp3>
+    try {
+      const qs = new URLSearchParams(location.search);
+      let u = qs.get('u');
+      const track = qs.get('track');
+      if (!u && track) {
+        u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
+      }
+      if (u) {
+        const url = decodeURIComponent(u);
+        setAudioSrc(url);
+      }
+    } catch (e) {
+      console.warn('Query param loader skipped:', e);
+    }
+  })();
+  </script>
 </body>
 </html>
