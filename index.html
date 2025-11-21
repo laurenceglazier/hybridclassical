@@ -159,8 +159,19 @@
 </head>
 <body>
 
+<!-- HC3 unified media player -->
+<video id="hc3-player"
+       playsinline
+       webkit-playsinline
+       preload="metadata"
+       poster="data:image/png;base64,...."
+       style="width:100%; max-height:40vh; background:#000;">
+  Your browser does not support HTML5 video.
+</video>
+
 <!-- Top header: logo + QR -->
 <header id="hc-topbar">
+
   <!-- LEFT: Logo -->
   <img id="hc-logo" 
   src='data:image/png;base64,
@@ -308,7 +319,9 @@ Choose Music:
   <button id="gestureButton">Enable Gesture Control</button>
   <div id="log"></div>
 
-
+  <button onclick="hc3LoadTestVideo()">
+    HC3 Test Video
+  </button>
 
 
 <section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
@@ -330,6 +343,12 @@ Choose Music:
 </section>
 
 <script>
+  // HC3 unified player (experimental)
+const hc3Player = document.getElementById('hc3-player');
+const hc3TestBtn = document.getElementById('hc3-test');
+
+// For now, we keep existing audio/video logic as-is.
+// HC3 will gradually move all loading and controls to hc3Player.
   const audioInput = document.getElementById('audioInput');
   const audioPlayer = document.getElementById('audioPlayer');
   const tempoSlider = document.getElementById('tempoSlider');
@@ -483,6 +502,46 @@ function showCurrentTrack(name) {
   const el = document.getElementById('currentTrack');
   if (!el) return;
   el.textContent = name ? `Now playing: ${name}` : '';
+}
+
+
+function hc3LoadTestVideo() {
+  if (!hc3Player) {
+    console.warn("hc3-player element not found");
+    return;
+  }
+
+  const url = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+  try { hc3Player.pause(); } catch (_) {}
+
+  hc3Player.src = url;
+  hc3Player.load();
+
+  hc3Player.play().catch(err => {
+    console.warn("Unable to auto-play HC3 test video:", err);
+  });
+}
+
+
+/**
+ * Load a URL into the unified HC3 player and start playback.
+ * Works for both MP3 and MP4.
+ */
+function hc3LoadFromURL(url) {
+  if (!hc3Player || !url) return;
+
+  try {
+    hc3Player.crossOrigin = 'anonymous'; // safe default for remote URLs
+  } catch (e) {
+    // ignore – some local blobs don’t support this
+  }
+
+  hc3Player.src = url;
+  hc3Player.load();
+
+  // Don’t worry if autoplay is blocked – user can tap the video
+  hc3Player.play().catch(() => {});
 }
 </script>
 <script>
