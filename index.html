@@ -161,11 +161,10 @@
 
 <!-- HC3 unified media player -->
 <video id="hc3-player"
-       playsinline
-       webkit-playsinline
-       preload="metadata"
-       poster="data:image/png;base64,...."
-       style="width:100%; max-height:40vh; background:#000;">
+  playsinline
+  webkit-playsinline
+  preload="metadata"
+  style="width:100%; max-height:40vh; background:#000;">
   Your browser does not support HTML5 video.
 </video>
 
@@ -346,6 +345,14 @@ Choose Music:
   // HC3 unified player (experimental)
 const hc3Player = document.getElementById('hc3-player');
 const hc3TestBtn = document.getElementById('hc3-test');
+
+// Use the existing logo image as the HC3 poster
+if (hc3Player) {
+  const logoImg = document.getElementById('hc-logo');
+  if (logoImg && logoImg.src) {
+    hc3Player.poster = logoImg.src;
+  }
+}
 
 // For now, we keep existing audio/video logic as-is.
 // HC3 will gradually move all loading and controls to hc3Player.
