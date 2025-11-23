@@ -321,6 +321,10 @@ Choose Music:
   <button onclick="hc3LoadTestVideo()">
     HC3 Test Video
   </button>
+  
+  <button onclick="hc3LoadTestAudio()">
+    HC3 Test Audio
+  </button>
 
 
 <section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
@@ -527,6 +531,25 @@ function hc3LoadTestVideo() {
 
   hc3Player.play().catch(err => {
     console.warn("Unable to auto-play HC3 test video:", err);
+  });
+}
+
+function hc3LoadTestAudio() {
+  if (!hc3Player) {
+    console.warn("hc3-player element not found");
+    return;
+  }
+
+  // Simple public MP3 test file (same source as before)
+  const url = "https://www.w3schools.com/html/horse.mp3";
+
+  try { hc3Player.pause(); } catch (_) {}
+
+  hc3Player.src = url;
+  hc3Player.load();
+
+  hc3Player.play().catch(err => {
+    console.warn("Unable to auto-play HC3 test audio:", err);
   });
 }
 
