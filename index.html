@@ -230,11 +230,21 @@ Choose Music:
 </a>
 
 <script>
+
   // If your loader is named differently, change this to call yours.
   async function loadFromUrl(src) {
-    // TODO: plug into your existing player logic.
-    // After successful load:
-    try { setShareUrl?.(src); } catch(_) {}
+    if (!src) return;
+
+    // HC3 unified loader: works for both MP3 and MP4
+    try {
+      hc3LoadFromURL(src);
+    } catch (e) {
+      console.warn('HC3 loadFromUrl failed:', e);
+      return;
+    }
+
+    // After successful load, update the share URL (if available)
+    try { setShareUrl?.(src); } catch (_) {}
   }
 
   function openLibraryPicker(e) {
@@ -295,6 +305,11 @@ Choose Music:
    style="margin-left:.5em;padding:.5em 1em;background:#666;
           color:#fff;border:none;border-radius:5px;cursor:pointer;">
   🔗 URL
+</button>
+
+<button id="hc3-open-url"
+        onclick="hc3OpenUrlFromInput()">
+  URL (HC3)
 </button>
 
 <!-- Status indicator for URL loading -->
@@ -580,6 +595,20 @@ function hc3LoadFromURL(url) {
   // Don’t worry if autoplay is blocked – user can tap the video
   hc3Player.play().catch(() => {});
 }
+function hc3OpenUrlFromInput() {
+  alert('The webapp has just entered the function hc3OpenUrlFromInput() - ChatGPT has stopped responding at this point ');
+  const urlInput = document.getElementById('urlInput');
+  if (!urlInput) {
+    console.warn('URL input element not found');
+    return;
+  }
+
+  const url = urlInput.value.trim();
+  if (!url) return;
+
+  hc3LoadFromURL(url);
+}
+
 </script>
 <script>
   (function () {
