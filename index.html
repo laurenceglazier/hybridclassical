@@ -1,8 +1,6 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
-  <!-- Test edit by Laurence: verifying GitHub Desktop commit process -->
+
 <head>
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="favicon.png">
@@ -16,9 +14,9 @@
       color: #000;
     }
 
- 
+
     .logo-and-version-container {
-    text-align: center;
+      text-align: center;
     }
 
     .logo-container img {
@@ -28,13 +26,16 @@
       display: block;
     }
 
-    input[type="file"], input[type="range"], button {
+    input[type="file"],
+    input[type="range"],
+    button {
       margin-top: 1em;
       padding: 0.5em;
       font-size: 1em;
     }
-    
-        #log, #rateDisplay {
+
+    #log,
+    #rateDisplay {
       white-space: pre-wrap;
       font-family: monospace;
       background: #f4f4f4;
@@ -95,34 +96,40 @@
     #tempoControl button:hover {
       background-color: #ccc;
     }
-    
+
     /* === HC header (logo + QR) — single source of truth === */
-    :root{
-      --brandHeight: 200px;                /* one knob for both images */
-      --sidePadding: 16px;                 /* equal edge padding */
-      --brandGap: var(--sidePadding);      /* middle gap = edges (nice symmetry) */
-      --qrQuiet: 12px;                     /* white quiet zone for fast scans */
+    :root {
+      --brandHeight: 200px;
+      /* one knob for both images */
+      --sidePadding: 16px;
+      /* equal edge padding */
+      --brandGap: var(--sidePadding);
+      /* middle gap = edges (nice symmetry) */
+      --qrQuiet: 12px;
+      /* white quiet zone for fast scans */
     }
 
-    #hc-topbar{
+    #hc-topbar {
       display: flex;
       align-items: center;
-      justify-content: space-evenly;      /* logo left, QR right */
+      justify-content: space-evenly;
+      /* logo left, QR right */
       gap: var(--brandGap);
       padding: 8px var(--sidePadding);
       border-bottom: 1px solid #eee;
     }
 
     #hc-logo,
-    #hc-qr{
+    #hc-qr {
       height: var(--brandHeight) !important;
       width: auto !important;
       display: block;
     }
 
-    #hc-qr{
+    #hc-qr {
       background: #fff;
-      padding: var(--qrQuiet);             /* quiet zone around modules */
+      padding: var(--qrQuiet);
+      /* quiet zone around modules */
       border: 1px solid #ddd;
       border-radius: 6px;
       image-rendering: pixelated;
@@ -130,12 +137,18 @@
     }
 
     /* Compact phones */
-    @media (max-width: 375px){
-      :root{ --brandHeight: 168px; }
+    @media (max-width: 375px) {
+      :root {
+        --brandHeight: 168px;
+      }
     }
-    @media (max-width: 340px){
-      :root{ --brandHeight: 148px; }
+
+    @media (max-width: 340px) {
+      :root {
+        --brandHeight: 148px;
+      }
     }
+
     /* Large, friendly Play/Pause button */
     .hc-big {
       font-size: 2.4rem;
@@ -143,7 +156,8 @@
       border-radius: 999px;
       line-height: 1;
       cursor: pointer;
-      margin-bottom: 10px; /* space above the audio bar */
+      margin-bottom: 10px;
+      /* space above the audio bar */
     }
 
     /* Make it larger on touch devices (phones, Vision Pro, tablets) */
@@ -153,18 +167,40 @@
         padding: 0.75rem 1.1rem;
       }
     }
-    .is-disabled { pointer-events: none; opacity: .55; }
-    [aria-disabled="true"] { pointer-events: none; opacity: .55; }
+
+    .is-disabled {
+      pointer-events: none;
+      opacity: .55;
+    }
+
+    [aria-disabled="true"] {
+      pointer-events: none;
+      opacity: .55;
+    }
   </style>
 </head>
 
 <body>
+  <input id="urlInput" type="text" placeholder="Paste URL here">
+  <button onclick="loadFromUrl()">Load</button>
+
+
+  <!--
+  // NOTE (dev): Simple test loader from URL.
+  // Controls (pause / sliders) don't sync yet because this bypasses
+  // hc3LoadFromURL() and the unified HC3 state.
+  // Next step: make this button call loadFromUrl(url) / hc3LoadFromURL(url)
+  // instead of setting player.src directly.
+  -->
+
+
+
+
+
   <!-- TODO: consider moving player inside header/main layout -->
   <!-- HC3 unified media player -->
-  <video id="hc3-player"
-    playsinline
-    webkit-playsinline
-    preload="metadata"
+  <!-- HC3 Map: This should handle everything from simple input controls -->
+  <video id="hc3-player" playsinline webkit-playsinline preload="metadata"
     style="width:100%; max-height:40vh; background:#000;">
     Your browser does not support HTML5 video.
   </video>
@@ -180,10 +216,13 @@
   <header id="hc-topbar">
 
     <!-- LEFT: Logo -->
-    <img id="hc-logo" src='data:image/png;base64,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' />
+    <img id="hc-logo"
+      src='data:image/png;base64,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' />
 
     <!-- RIGHT: QR -->
-    <img id="hc-qr" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAAB0AQAAAAB84SuKAAAA40lEQVR4nL2VsW1EMQxDnw7pqQ3+/mN5A2oCpvhX5HApzgYSVRLgB8kWQVf4GfPgNf6+rqqmizvZ55VQy7SS/f5fUAJR6dIRD1CkP5z3tzp64id8zKyxiff5SoEAGNDa75/EDNzJPt/QeLF6an9+YuPE2BDv8wJZsWLrgDe2IyxywmMQssgB/4BOJoCZ/fevp/AWKnxt75/IiaXE1sn9hYQBpJP9JYmcKMo+f/vP6ulbiGf+Q67BcKJ/qqGHKfrYT5dBXvvz3/4lGjzXkf+FHkyXfNJ/CnWayXxw/l2/L+W//1/frmOGzi/tt5UAAAAASUVORK5CYII=" alt="QR Code">
+    <img id="hc-qr"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAAB0AQAAAAB84SuKAAAA40lEQVR4nL2VsW1EMQxDnw7pqQ3+/mN5A2oCpvhX5HApzgYSVRLgB8kWQVf4GfPgNf6+rqqmizvZ55VQy7SS/f5fUAJR6dIRD1CkP5z3tzp64id8zKyxiff5SoEAGNDa75/EDNzJPt/QeLF6an9+YuPE2BDv8wJZsWLrgDe2IyxywmMQssgB/4BOJoCZ/fevp/AWKnxt75/IiaXE1sn9hYQBpJP9JYmcKMo+f/vP6ulbiGf+Q67BcKJ/qqGHKfrYT5dBXvvz3/4lGjzXkf+FHkyXfNJ/CnWayXxw/l2/L+W//1/frmOGzi/tt5UAAAAASUVORK5CYII="
+      alt="QR Code">
 
   </header>
 
@@ -204,918 +243,926 @@
   <h1>Hybrid Classical – Virtual Conductor</h1>
   <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
-Choose Music:
+  Choose Music:
 
-<!-- Online library button 
-<a href="https://www.hybridclassical.ai/library/"
-   target="_blank" rel="noopener"
-   style="display:inline-block;margin-top:1em;margin-left:.5em;
-          padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
-          text-decoration:none;cursor:pointer;border:none;">
-  🌐 Open from Internet
-</a>
--->
+  <!-- Online library button 
+  <a href="https://www.hybridclassical.ai/library/"
+    target="_blank" rel="noopener"
+    style="display:inline-block;margin-top:1em;margin-left:.5em;
+            padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
+            text-decoration:none;cursor:pointer;border:none;">
+    🌐 Open from Internet
+  </a>
+  -->
 
-<!-- Opens the curated library (existing behavior) -->
+  <!-- Opens the curated library (existing behavior) -->
+
+  <a id="openLibrary" href="https://www.hybridclassical.ai/library/?mode=picker" style="display:inline-block;margin-top:1em;margin-left:.5em;
+            padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
+            text-decoration:none;cursor:pointer;">
+    🌐 Internet
+  </a>
+
+  <script>
+
+    // If your loader is named differently, change this to call yours.
+    // HC3 Map: Can use from HC Library and Load From URL functions
 
 
 
-<a id="openLibrary"
-   href="https://www.hybridclassical.ai/library/?mode=picker"
-   style="display:inline-block;margin-top:1em;margin-left:.5em;
-          padding:.5em 1em;background:#444;color:#fff;border-radius:5px;
-          text-decoration:none;cursor:pointer;">
-  🌐 Internet
-</a>
 
-<script>
+    function loadFromUrl() {
+      const url = document.getElementById("urlInput").value.trim();
+      const player = document.getElementById("hc3-player");   // ← note the hyphen
 
-  // If your loader is named differently, change this to call yours.
-  async function loadFromUrl(src) {
-    if (!src) return;
-
-    // HC3 unified loader: works for both MP3 and MP4
-    try {
-      hc3LoadFromURL(src);
-    } catch (e) {
-      console.warn('HC3 loadFromUrl failed:', e);
-      return;
-    }
-
-    // After successful load, update the share URL (if available)
-    try { setShareUrl?.(src); } catch (_) {}
-  }
-
-  function openLibraryPicker(e) {
-    e.preventDefault(); // don't follow the link directly
-    const pickerUrl = document.getElementById('openLibrary').getAttribute('href');
-    // Open a real new tab/window and keep a reference so we can close it later.
-    const lib = window.open(pickerUrl, '_blank'); // no rel=noopener here
-
-    function onMsg(ev) {
-      // Only accept messages from your live domain:
-      const allowedOrigin = 'https://www.hybridclassical.ai';
-      if (ev.origin !== allowedOrigin) return;
-
-      const msg = ev.data || {};
-      if (msg.type === 'HC_SELECT_URL' && msg.url) {
-        loadFromUrl(msg.url);
-        try { lib && lib.close(); } catch(_) {}
-        window.removeEventListener('message', onMsg);
+      if (!url) {
+        alert("Please paste a valid URL.");
+        return;
       }
+
+      if (!player) {
+        console.warn("hc3-player element not found");
+        return;
+      }
+
+      console.log("Loading:", url);
+      player.src = url;
+      player.play().catch(err => console.warn("Autoplay failed:", err));
     }
-    window.addEventListener('message', onMsg);
-  }
 
-  document.getElementById('openLibrary').addEventListener('click', openLibraryPicker);
+    function openLibraryPicker(e) {
+      e.preventDefault(); // don't follow the link directly
+      const pickerUrl = document.getElementById('openLibrary').getAttribute('href');
+      // Open a real new tab/window and keep a reference so we can close it later.
+      const lib = window.open(pickerUrl, '_blank'); // no rel=noopener here
 
-  // Optional deep-linking helper; harmless if you add later.
-  function setShareUrl(srcUrl) {
-    const u = new URL(window.location.href);
-    u.searchParams.set('u', srcUrl);
-    history.replaceState(null, '', u);
-  }
+      function onMsg(ev) {
+        // Only accept messages from your live domain:
+        const allowedOrigin = 'https://www.hybridclassical.ai';
+        if (ev.origin !== allowedOrigin) return;
 
-  // Optional: auto-load if shared with ?u=...
-  (function bootFromParam() {
-    try {
-      const u = new URL(window.location.href).searchParams.get('u');
-      if (u) loadFromUrl(u);
-    } catch (_) {}
-  })();
-</script>
+        const msg = ev.data || {};
+        if (msg.type === 'HC_SELECT_URL' && msg.url) {
+          loadFromUrl(msg.url);
+          try { lib && lib.close(); } catch (_) { }
+          window.removeEventListener('message', onMsg);
+        }
+      }
+      window.addEventListener('message', onMsg);
+    }
 
+    document.getElementById('openLibrary').addEventListener('click', openLibraryPicker);
 
+    // Optional deep-linking helper; harmless if you add later.
+    function setShareUrl(srcUrl) {
+      const u = new URL(window.location.href);
+      u.searchParams.set('u', srcUrl);
+      history.replaceState(null, '', u);
+    }
 
-<!-- Local file chooser -->
-<label for="audioInput"
-       style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
-              background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
-📂 Local
-</label>
-
-<input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
-
-
-
-
-<!-- Allows direct URL input -->
-<button id="openUrl" 
-   style="margin-left:.5em;padding:.5em 1em;background:#666;
-          color:#fff;border:none;border-radius:5px;cursor:pointer;">
-  🔗 URL
-</button>
+    // Optional: auto-load if shared with ?u=...
+    (function bootFromParam() {
+      try {
+        const u = new URL(window.location.href).searchParams.get('u');
+        if (u) loadFromUrl(u);
+      } catch (_) { }
+    })();
+  </script>
 
 
 
-<!-- Status indicator for URL loading -->
-<div id="status" style="
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0.5em 0;
-"></div>
+  <!-- Local file chooser -->
+  <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
+                background-color: #444; color: #fff; border-radius: 5px; cursor: pointer;">
+    📂 Local
+  </label>
+
+  <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
+
+
+
+
+  <!-- Allows direct URL input -->
+  <button id="openUrl" style="margin-left:.5em;padding:.5em 1em;background:#666;
+            color:#fff;border:none;border-radius:5px;cursor:pointer;">
+    🔗 URL
+  </button>
+
+  <!-- Status indicator for URL loading -->
+  <div id="status" style="
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5em 0;
+  "></div>
 
   <button id="bigPlay" class="hc-big" aria-label="Play">▶︎</button>
   <audio id="audioPlayer" controls></audio>
-  <video id="videoPlayer" controls playsinline
-       style="display:none;width:100%;background:#000"></video>
+  <video id="videoPlayer" controls playsinline style="display:none;width:100%;background:#000"></video>
   <div id="currentTrack" style="margin:.5rem 0; opacity:.85;"></div>
 
-<!-- Stopped here: emoji layout tweak in progress -->
- 
+  <!-- Stopped here: emoji layout tweak in progress -->
+
   <div id="tempoControl">
 
     <span class="tempo-icon">🚶‍♂️</span>
-<button id="tempoDown">–</button>
-<input type="range" id="tempoSlider" min="0.5" max="2" step="0.01" value="1.0">
-<button id="tempoUp">+</button>
-<span class="tempo-icon flipped">🏃‍♂️</span>
+    <button id="tempoDown">–</button>
+    <input type="range" id="tempoSlider" min="0.5" max="2" step="0.01" value="1.0">
+    <button id="tempoUp">+</button>
+    <span class="tempo-icon flipped">🏃‍♂️</span>
 
   </div>
   <div id="rateDisplay">1.00×</div>
   <button id="gestureButton">Enable Gesture Control</button>
   <div id="log"></div>
-
   <button onclick="hc3LoadTestVideo()">
     HC3 Test Video
   </button>
-  
+
   <button onclick="hc3LoadTestAudio()">
     HC3 Test Audio
   </button>
+  <button onclick="loadFromUrlSimple()">Load URL ----xxxx---- </button>
 
 
-<section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
-  <h2 style="margin-bottom: 1em;">Share Hybrid Classical</h2>
+  <section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
+    <h2 style="margin-bottom: 1em;">Share Hybrid Classical</h2>
 
-  <!-- Embedded QR Code -->
+    <!-- Embedded QR Code -->
 
 
-  <img 
-  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAAB0AQAAAAB84SuKAAAA40lEQVR4nL2VsW1EMQxDnw7pqQ3+/mN5A2oCpvhX5HApzgYSVRLgB8kWQVf4GfPgNf6+rqqmizvZ55VQy7SS/f5fUAJR6dIRD1CkP5z3tzp64id8zKyxiff5SoEAGNDa75/EDNzJPt/QeLF6an9+YuPE2BDv8wJZsWLrgDe2IyxywmMQssgB/4BOJoCZ/fevp/AWKnxt75/IiaXE1sn9hYQBpJP9JYmcKMo+f/vP6ulbiGf+Q67BcKJ/qqGHKfrYT5dBXvvz3/4lGjzXkf+FHkyXfNJ/CnWayXxw/l2/L+W//1/frmOGzi/tt5UAAAAASUVORK5CYII=" 
-  alt="QR code linking to hybridclassical.ai" 
-  style="max-width: 200px; height: auto; border: 1px solid #ccc; padding: 0.5em; background: white;" 
-/>
+    <img
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAAB0AQAAAAB84SuKAAAA40lEQVR4nL2VsW1EMQxDnw7pqQ3+/mN5A2oCpvhX5HApzgYSVRLgB8kWQVf4GfPgNf6+rqqmizvZ55VQy7SS/f5fUAJR6dIRD1CkP5z3tzp64id8zKyxiff5SoEAGNDa75/EDNzJPt/QeLF6an9+YuPE2BDv8wJZsWLrgDe2IyxywmMQssgB/4BOJoCZ/fevp/AWKnxt75/IiaXE1sn9hYQBpJP9JYmcKMo+f/vP6ulbiGf+Q67BcKJ/qqGHKfrYT5dBXvvz3/4lGjzXkf+FHkyXfNJ/CnWayXxw/l2/L+W//1/frmOGzi/tt5UAAAAASUVORK5CYII="
+      alt="QR code linking to hybridclassical.ai"
+      style="max-width: 200px; height: auto; border: 1px solid #ccc; padding: 0.5em; background: white;" />
 
-  <!-- Save Local Info -->
-  <p style="margin-top: 1.5em; font-size: 0.9em;">
-    <strong>Tip:</strong> On your phone, tap Share → <em>Add to Home Screen</em> to save this app locally.
-  </p>
-</section>
+    <!-- Save Local Info -->
+    <p style="margin-top: 1.5em; font-size: 0.9em;">
+      <strong>Tip:</strong> On your phone, tap Share → <em>Add to Home Screen</em> to save this app locally.
+    </p>
+  </section>
 
-<script>
-  // HC3 unified player (experimental)
-const hc3Player = document.getElementById('hc3-player');
-const hc3TestBtn = document.getElementById('hc3-test');
+  <script>
+    // HC3 unified player (experimental)
+    const hc3Player = document.getElementById('hc3-player');
+    const hc3TestBtn = document.getElementById('hc3-test');
 
-// Use the existing logo image as the HC3 poster
-if (hc3Player) {
-  const logoImg = document.getElementById('hc-logo');
-  if (logoImg && logoImg.src) {
-    hc3Player.poster = logoImg.src;
-  }
-}
+    // Use the existing logo image as the HC3 poster
+    if (hc3Player) {
+      const logoImg = document.getElementById('hc-logo');
+      if (logoImg && logoImg.src) {
+        hc3Player.poster = logoImg.src;
+      }
+    }
 
-// For now, we keep existing audio/video logic as-is.
-// HC3 will gradually move all loading and controls to hc3Player.
-  const audioInput = document.getElementById('audioInput');
-  const audioPlayer = document.getElementById('audioPlayer');
-  const tempoSlider = document.getElementById('tempoSlider');
-  const rateDisplay = document.getElementById('rateDisplay');
-  const gestureButton = document.getElementById('gestureButton');
-  const log = document.getElementById('log');
-  const tempoUp = document.getElementById('tempoUp');
-  const tempoDown = document.getElementById('tempoDown');
-
-  const DEAD_ZONE = 5;
-  const GAMMA_MIN = -30;
-  const GAMMA_MAX = 30;
-  const RATE_MIN = 0.5;
-  const RATE_MAX = 2.0;
-  const UPDATE_INTERVAL = 100;
-  const NUDGE_STEP = 0.01;
-
-  let gestureEnabled = false;
-  let lastUpdateTime = 0;
-  let nudgeInterval = null;
-
-  function updatePlaybackRate(rate) {
-    audioPlayer.playbackRate = rate;
-    tempoSlider.value = rate.toFixed(2);
-    rateDisplay.textContent = rate.toFixed(2) + '×';
-  }
-
-  function adjustTempo(change) {
-    let newRate = parseFloat(tempoSlider.value) + change;
-    newRate = Math.max(RATE_MIN, Math.min(RATE_MAX, newRate));
-    updatePlaybackRate(newRate);
-  }
-
-  function startNudge(change) {
-    adjustTempo(change);
-    nudgeInterval = setInterval(() => adjustTempo(change), 100);
-  }
-
-  function stopNudge() {
-    clearInterval(nudgeInterval);
-  }
-
-  tempoUp.addEventListener('mousedown', () => startNudge(NUDGE_STEP));
-  tempoUp.addEventListener('touchstart', () => startNudge(NUDGE_STEP));
-  tempoDown.addEventListener('mousedown', () => startNudge(-NUDGE_STEP));
-  tempoDown.addEventListener('touchstart', () => startNudge(-NUDGE_STEP));
-  document.addEventListener('mouseup', stopNudge);
-  document.addEventListener('touchend', stopNudge);
+    // Test 25.11.27
+    document.getElementById("testUrlBtn").onclick = function () {
+      const url = document.getElementById("urlInput").value.trim();
+      const player = document.getElementById("hc3player");
+      player.src = url;
+      player.play();
+    };
 
 
 
+    // For now, we keep existing audio/video logic as-is.
+    // HC3 will gradually move all loading and controls to hc3Player.
+    const audioInput = document.getElementById('audioInput');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const tempoSlider = document.getElementById('tempoSlider');
+    const rateDisplay = document.getElementById('rateDisplay');
+    const gestureButton = document.getElementById('gestureButton');
+    const log = document.getElementById('log');
+    const tempoUp = document.getElementById('tempoUp');
+    const tempoDown = document.getElementById('tempoDown');
 
-audioInput.addEventListener('change', (event) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
+    const DEAD_ZONE = 5;
+    const GAMMA_MIN = -30;
+    const GAMMA_MAX = 30;
+    const RATE_MIN = 0.5;
+    const RATE_MAX = 2.0;
+    const UPDATE_INTERVAL = 100;
+    const NUDGE_STEP = 0.01;
 
-  const url  = URL.createObjectURL(file);
-  const name = file.name || '';
+    let gestureEnabled = false;
+    let lastUpdateTime = 0;
+    let nudgeInterval = null;
 
-  // Route by extension: MP4 → video, otherwise → audio
-  if (/\.mp4$/i.test(name)) {
-    window.hcUseVideo(url);      // show and load video
-  } else {
-    window.hcUseAudio
-      ? window.hcUseAudio(url)   // call helper if defined
-      : (audioPlayer.src = url, audioPlayer.load());
-  }
+    function updatePlaybackRate(rate) {
+      audioPlayer.playbackRate = rate;
+      tempoSlider.value = rate.toFixed(2);
+      rateDisplay.textContent = rate.toFixed(2) + '×';
+    }
 
-  updatePlaybackRate(1.0);
-  showCurrentTrack(name);
-});
+    function adjustTempo(change) {
+      let newRate = parseFloat(tempoSlider.value) + change;
+      newRate = Math.max(RATE_MIN, Math.min(RATE_MAX, newRate));
+      updatePlaybackRate(newRate);
+    }
+
+    function startNudge(change) {
+      adjustTempo(change);
+      nudgeInterval = setInterval(() => adjustTempo(change), 100);
+    }
+
+    function stopNudge() {
+      clearInterval(nudgeInterval);
+    }
+
+    tempoUp.addEventListener('mousedown', () => startNudge(NUDGE_STEP));
+    tempoUp.addEventListener('touchstart', () => startNudge(NUDGE_STEP));
+    tempoDown.addEventListener('mousedown', () => startNudge(-NUDGE_STEP));
+    tempoDown.addEventListener('touchstart', () => startNudge(-NUDGE_STEP));
+    document.addEventListener('mouseup', stopNudge);
+    document.addEventListener('touchend', stopNudge);
 
 
-  tempoSlider.addEventListener('input', () => {
-    const rate = parseFloat(tempoSlider.value);
-    updatePlaybackRate(rate);
-  });
 
-  function calculatePlaybackRate(gamma) {
-    if (Math.abs(gamma) < DEAD_ZONE) return 1.0;
-    const clamped = Math.max(GAMMA_MIN, Math.min(GAMMA_MAX, gamma));
-    const percent = (clamped - GAMMA_MIN) / (GAMMA_MAX - GAMMA_MIN);
-    return RATE_MIN + (RATE_MAX - RATE_MIN) * percent;
-  }
 
-  function setupGestureControl() {
-    window.addEventListener('deviceorientation', (event) => {
-      const now = Date.now();
-      if (!gestureEnabled || now - lastUpdateTime < UPDATE_INTERVAL) return;
+    audioInput.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-      const gamma = event.gamma ?? 0;
-      const beta = event.beta ?? 0;
-      const rate = calculatePlaybackRate(gamma);
-      const rounded = rate.toFixed(2);
+      const url = URL.createObjectURL(file);
+      const name = file.name || '';
 
-      log.textContent =
-        `gamma: ${gamma.toFixed(2)}°\n` +
-        `beta:  ${beta.toFixed(2)}°\n` +
-        `mapped playbackRate: ${rounded}`;
-
-      updatePlaybackRate(rate);
-      lastUpdateTime = now;
-    });
-  }
-
-  gestureButton.addEventListener('click', () => {
-    if (!gestureEnabled) {
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then(response => {
-            if (response === 'granted') {
-              gestureEnabled = true;
-              gestureButton.textContent = 'Disable Gesture Control';
-            }
-          })
-          .catch(err => console.error(err));
+      // Route by extension: MP4 → video, otherwise → audio
+      if (/\.mp4$/i.test(name)) {
+        window.hcUseVideo(url);      // show and load video
       } else {
-        gestureEnabled = true;
-        gestureButton.textContent = 'Disable Gesture Control';
+        window.hcUseAudio
+          ? window.hcUseAudio(url)   // call helper if defined
+          : (audioPlayer.src = url, audioPlayer.load());
       }
-    } else {
-      gestureEnabled = false;
-      gestureButton.textContent = 'Enable Gesture Control';
+
+      updatePlaybackRate(1.0);
+      showCurrentTrack(name);
+    });
+
+
+    tempoSlider.addEventListener('input', () => {
+      const rate = parseFloat(tempoSlider.value);
+      updatePlaybackRate(rate);
+    });
+
+    function calculatePlaybackRate(gamma) {
+      if (Math.abs(gamma) < DEAD_ZONE) return 1.0;
+      const clamped = Math.max(GAMMA_MIN, Math.min(GAMMA_MAX, gamma));
+      const percent = (clamped - GAMMA_MIN) / (GAMMA_MAX - GAMMA_MIN);
+      return RATE_MIN + (RATE_MAX - RATE_MIN) * percent;
     }
-  });
 
-  setupGestureControl();
-
-  // Support ?track= URL param (for deep linking)
-
-  (function () {
-  const params = new URLSearchParams(location.search);
-  const track = params.get('track');
-  if (!track) return;
-
-  const url = decodeURIComponent(track);
-  audioPlayer.crossOrigin = 'anonymous';
-  audioPlayer.src = url;
-  audioPlayer.load();
-  updatePlaybackRate(1.0); // reset slider, label, and playbackRate
-
-  // Show filename portion
-  const nameOnly = url.split('/').pop() || url;
-  showCurrentTrack(nameOnly);
-
-  audioPlayer.play().catch(() => {});
-})();
-
-  // Helper: show "Now playing"
-function showCurrentTrack(name) {
-  const el = document.getElementById('currentTrack');
-  if (!el) return;
-  el.textContent = name ? `Now playing: ${name}` : '';
-}
-
-
-function hc3LoadTestVideo() {
-  if (!hc3Player) {
-    console.warn("hc3-player element not found");
-    return;
-  }
-
-  const url = "https://www.w3schools.com/html/mov_bbb.mp4";
-
-  try { hc3Player.pause(); } catch (_) {}
-
-  hc3Player.src = url;
-  hc3Player.load();
-
-  hc3Player.play().catch(err => {
-    console.warn("Unable to auto-play HC3 test video:", err);
-  });
-}
-
-function hc3LoadTestAudio() {
-  if (!hc3Player) {
-    console.warn("hc3-player element not found");
-    return;
-  }
-
-  // Simple public MP3 test file (same source as before)
-  const url = "https://www.w3schools.com/html/horse.mp3";
-
-  try { hc3Player.pause(); } catch (_) {}
-
-  hc3Player.src = url;
-  hc3Player.load();
-
-  hc3Player.play().catch(err => {
-    console.warn("Unable to auto-play HC3 test audio:", err);
-  });
-}
-
-
-/**
- * Load a URL into the unified HC3 player and start playback.
- * Works for both MP3 and MP4.
- */
-
-
-function hc3LoadFromURL(url) {
-  alert("HC3 loader was called with URL:\n" + url);
-  
-  if (!hc3Player || !url) return;
-
-  try {
-    hc3Player.crossOrigin = 'anonymous'; // safe default for remote URLs
-  } catch (e) {
-    // ignore – some local blobs don’t support this
-  }
-
-  hc3Player.src = url;
-  hc3Player.load();
-
-  // Don’t worry if autoplay is blocked – user can tap the video
-  hc3Player.play().catch(() => {});
-}
-
-
-
-
-</script>
-<script>
-  (function () {
-    const params = new URLSearchParams(location.search);
-    const idRaw = params.get('id');
-    if (!idRaw) return;
-  
-    // Allow subfolders and .mp3 filenames; strip unsafe chars
-    const id = idRaw.trim().replace(/[^a-zA-Z0-9/_\-.]/g, '');
-    if (!id || !id.endsWith('.mp3')) return;
-  
-    // Base where your MP3s live today (can change later without changing links)
-    const BASE = 'https://laurenceglazier.github.io/hc-tracks/audio/';
-    const url = BASE + id;
-  
-    const audio = document.querySelector('audio');
-    if (!audio) return;
-  
-    audio.crossOrigin = 'anonymous';
-    audio.src = url;
-    try { audio.load(); } catch (e) {}
-    // Optional: auto-play
-    // audio.play().catch(()=>{});
-  
-    // Keep the nice ?id=... URL (no username or full path shown)
-    history.replaceState(null, '', '/?id=' + encodeURIComponent(id));
-  
-    // Optional: update a label
-    const label = document.getElementById('currentTrack');
-    if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
-  })();
-  (function(){
-  const audio = document.getElementById('audioPlayer');
-  const big   = document.getElementById('bigPlay');
-  if (!audio || !big) return;
-
-  function sync() {
-    big.textContent = audio.paused ? '▶︎' : '⏸';
-  }
-
-
-  audio.addEventListener('play',  sync);
-  audio.addEventListener('pause', sync);
-
-  sync(); // initialise button icon
-})();
-// --- Big Play/Pause controller that survives DOM changes ---
-(function () {
-  let current; // whichever element is active: audio or video
-
-  function sync() {
-    const big = document.getElementById('bigPlay');
-    if (!big || !current) return;
-    big.textContent = current.paused ? '▶︎' : '⏸';
-  }
-
-  function bindTo(el) {
-    if (!el) return;
-    // remove old listeners if we had a previous current
-    if (current) {
-      current.removeEventListener('play',  sync);
-      current.removeEventListener('pause', sync);
-    }
-    current = el;
-    current.addEventListener('play',  sync);
-    current.addEventListener('pause', sync);
-    sync();
-  }
-
-  // Click handler (always looks up the current element)
-  document.addEventListener('click', (e) => {
-    if (e.target && e.target.id === 'bigPlay' && current) {
-      if (current.paused) current.play().catch(()=>{}); else current.pause();
-    }
-  });
-
-  // Re-bind if your app swaps/rebuilds the player nodes
-  const mo = new MutationObserver(() => {
-    // Prefer #videoPlayer if visible, else #audioPlayer
-    const v = document.getElementById('videoPlayer');
-    const a = document.getElementById('audioPlayer');
-    const visible = v && v.style.display !== 'none' ? v : a;
-    if (visible && visible !== current) bindTo(visible);
-  });
-  mo.observe(document.body, { childList: true, subtree: true });
-
-  // Initial bind (in case elements already exist)
-  bindTo(document.getElementById('videoPlayer') || document.getElementById('audioPlayer'));
-})();
-(function () {
-  // Elements
-  const big = document.getElementById('bigPlay');
-  if (!big) return;
-
-  const getAudio = () => document.getElementById('audioPlayer');
-  let audio = null;
-
-  // Keep pitch constant across tempo changes (harmless if already true)
-  function enforcePitch(el){
-    try { el.preservesPitch = true; } catch(_) {}
-    try { el.webkitPreservesPitch = true; } catch(_) {}
-    try { el.mozPreservesPitch = true; } catch(_) {}
-  }
-
-  // Update the button symbol to match the player state
-  function sync(){
-    if (!audio) return;
-    big.textContent = audio.paused ? '▶︎' : '⏸';
-  }
-
-  // (Re)bind listeners to the current audio element
-  function bind(){
-    const el = getAudio();
-    if (el === audio) return;
-
-    if (audio){
-      audio.removeEventListener('play',  sync);
-      audio.removeEventListener('pause', sync);
-    }
-    audio = el;
-    if (!audio) return;
-
-    enforcePitch(audio);
-    audio.addEventListener('play',  sync);
-    audio.addEventListener('pause', sync);
-    sync();
-  }
-
-  // Initial bind
-  bind();
-
-  // If your "Open from Internet" code replaces DOM, rebind automatically
-  const mo = new MutationObserver(bind);
-  mo.observe(document.body, { childList: true, subtree: true });
-
-  // Resync symbol on tab visibility changes (belt-and-braces)
-  document.addEventListener('visibilitychange', sync);
-})();
-
-      /* Dev override: intercept "Open from Internet" when testing locally */
-      (function(){
-        const isLocal = /^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname);
-        if (!isLocal) return; // Only run on Live Server
-      
-        const link = document.getElementById('openInternet');
-        const audio = document.getElementById('audioPlayer');
-        if (!link || !audio) return;
-      
-        link.addEventListener('click', (e) => {
-          e.preventDefault(); // stop opening new tab
-          const url = prompt('Paste the full MP3 URL to load here:');
-          if (!url) return;
-          try { audio.preservesPitch = audio.webkitPreservesPitch = audio.mozPreservesPitch = true; } catch(_) {}
-          audio.src = url;
-          audio.load();
-          // The big button already controls this audio
-        });
-      })();
-      </script>
-      <script>
-        (function () {
-          function useAudioDirect(url){
-            const a = document.getElementById('audioPlayer');
-            const v = document.getElementById('videoPlayer');
-            try { v && v.pause(); } catch(_){}
-            if (v) v.style.display = 'none';
-            if (a) {
-              a.style.display = '';
-              a.src = url;
-              try { a.load(); } catch(_){}
-            }
-            // If helpers exist, let them (re)bind things too
-            if (window.hcUseAudio) window.hcUseAudio(url);
-          }
-        
-          function useVideoDirect(url){
-            const a = document.getElementById('audioPlayer');
-            const v = document.getElementById('videoPlayer');
-            try { a && a.pause(); } catch(_){}
-            if (a) a.style.display = 'none';
-            if (v) {
-              v.style.display = '';
-              v.removeAttribute('height');
-              v.src = url;
-              try { v.load(); } catch(_){}
-            }
-            if (window.hcUseVideo) window.hcUseVideo(url);
-          }
-        
-          // Old version: route by extension
-          
-          // function handleOpenUrl(){
-          //   const url = prompt('Paste an MP3 or MP4 URL…');
-          //   if (!url) return;
-          //   (/\.mp4(\?|#|$)/i.test(url) ? useVideoDirect : useAudioDirect)(url);
-          // }
-
-          function handleOpenUrl() {
-            const url = prompt('Paste an MP3 or MP4 URL…');
-            if (!url) return;
-
-            // Trim and send straight to HC3 unified player
-            hc3LoadFromURL(url.trim());
-          }
-        
-          // Event delegation = works regardless of DOM order
-          document.addEventListener('click', function(e){
-            if (e.target && e.target.id === 'openUrl') {
-              handleOpenUrl();
-            }
-          });
-        })();
-        </script>
-        <script>
-          (function(){
-            const audio   = document.getElementById('audioPlayer');
-            const video   = document.getElementById('videoPlayer'); // ok if absent for now
-            const elLocal = document.querySelector('label[for="audioInput"]');
-            const elLib   = document.getElementById('openLibrary');
-            const elUrl   = document.getElementById('openUrl');
-          
-            function setChoosersEnabled(enabled){
-              [elLocal, elLib, elUrl].forEach(el => {
-                if (!el) return;
-                if (el.tagName === 'BUTTON') el.disabled = !enabled;
-                el.setAttribute('aria-disabled', enabled ? 'false' : 'true');
-                el.classList.toggle('is-disabled', !enabled);
-              });
-            }
-          
-            function wire(el){
-              if (!el) return;
-              el.addEventListener('play',  () => setChoosersEnabled(false));
-              el.addEventListener('pause', () => setChoosersEnabled(true));
-              el.addEventListener('ended', () => setChoosersEnabled(true));
-            }
-          
-            wire(audio);
-            wire(video);
-          })();
-          </script>
-          <script>
-            /* MP4 add-on: activates <video>, routes Big Play to video when active, mirrors tempo */
-            (function () {
-              const audio = document.getElementById('audioPlayer');
-              const video = document.getElementById('videoPlayer');
-              const big   = document.getElementById('bigPlay');
-              const tempo = document.getElementById('tempoSlider');
-              if (!audio || !video || !big) return;
-            
-              function keepPitch(el){
-                try { el.preservesPitch = true; } catch(_) {}
-                try { el.webkitPreservesPitch = true; } catch(_) {}
-                try { el.mozPreservesPitch = true; } catch(_) {}
-              }
-              keepPitch(audio); keepPitch(video);
-            
-              let current = 'audio';
-            
-              function activateVideo() {
-                current = 'video';
-                try { audio.pause(); } catch(_){}
-                audio.style.display = 'none';
-                video.style.display = '';
-              }
-              function activateAudio() {
-                current = 'audio';
-                try { video.pause(); } catch(_){}
-                video.style.display = 'none';
-                audio.style.display = '';
-              }
-            
-              // Public helper so we can load MP4s anywhere
-              window.hcUseVideo = function(url){
-                activateVideo();
-                video.src = url;
-                try { video.load(); } catch(_){}
-              };
-            
-              // If something starts playing, remember which is active
-              audio.addEventListener('play', () => current = 'audio');
-              video.addEventListener('play', () => current = 'video');
-            
-            
-              // Mirror tempo to video when video is active
-              if (tempo) {
-                tempo.addEventListener('input', () => {
-                  if (current === 'video') {
-                    const r = parseFloat(tempo.value) || 1;
-                    video.playbackRate = r;
-                  }
-                });
-              }
-            })();
-            </script>
-            <script>
-              // Install minimal fallbacks if the helpers aren't defined yet.
-              // Safe to keep: if real versions exist, these won't overwrite them.
-              if (typeof window.hcUseAudio !== 'function') {
-                window.hcUseAudio = function(url){
-                  const a = document.getElementById('audioPlayer');
-                  const v = document.getElementById('videoPlayer');
-                  try { v && v.pause(); } catch(_){}
-                  if (v) v.style.display = 'none';
-                  if (!a) return;
-                  a.style.display = '';
-                  a.src = url;
-                  try { a.load(); } catch(_){}
-                };
-                console.log('[hc] fallback hcUseAudio installed');
-              }
-              
-              if (typeof window.hcUseVideo !== 'function') {
-                window.hcUseVideo = function(url){
-                  const a = document.getElementById('audioPlayer');
-                  const v = document.getElementById('videoPlayer');
-                  try { a && a.pause(); } catch(_){}
-                  if (a) a.style.display = 'none';
-                  if (!v) return;
-                  v.style.display = '';
-                  v.removeAttribute('height'); // avoid tiny picture
-                  v.src = url;
-                  try { v.load(); } catch(_){}
-                };
-                console.log('[hc] fallback hcUseVideo installed');
-              }
-              </script>
-              <script>
-                /* Minimal, robust MP4 wiring: helpers + Big Play + tempo mirror */
-                (function () {
-                  const audio = document.getElementById('audioPlayer');
-                  const video = document.getElementById('videoPlayer');
-                  const big   = document.getElementById('bigPlay');
-                  const tempo = document.getElementById('tempoSlider');
-                  if (!audio || !video || !big) return;
-                
-                  // Keep pitch constant if the browser supports it
-                  function keepPitch(el){
-                    try { el.preservesPitch = true; } catch(_) {}
-                    try { el.webkitPreservesPitch = true; } catch(_) {}
-                    try { el.mozPreservesPitch = true; } catch(_) {}
-                  }
-                  keepPitch(audio); keepPitch(video);
-                
-                  // Track which element Big Play should control
-                  let current = 'audio';
-                
-                  function stopAll(){
-                  try { audio && audio.pause(); } catch(_){}
-                  try { video && video.pause(); } catch(_){}
-                  }
-
-
-
-                  function showAudio(){
-                    // stop + fully unload the video so its audio can't keep playing
-                    stopAll();
-                    if (video){
-                      video.removeAttribute('src');   // detach stream
-                      try { video.load(); } catch(_) {}
-                      video.style.display = 'none';
-                    }
-                    // show audio
-                    if (audio){
-                      audio.style.display = '';
-                    }
-                    current = 'audio';
-                  }
-            
-
-                  function showVideo(){
-                    // stop + fully unload the audio so it can't keep playing
-                    stopAll();
-                    if (audio){
-                      audio.removeAttribute('src');   // detach stream
-                      try { audio.load(); } catch(_) {}
-                      audio.style.display = 'none';
-                    }
-                    // show video
-                    if (video){
-                      video.style.display = '';
-                      video.removeAttribute('height'); // avoid tiny letterboxing
-                    }
-                    current = 'video';
-                  }
-
-
-                  
-                
-                  // Helpers used by "Open from URL" and the file picker
- 
-
-                  window.hcUseAudio = function(url){
-                    showAudio();
-                    if (audio){
-                      audio.src = url;
-                      try { audio.load(); } catch(_) {}
-                    }
-                  };
-
-                  window.hcUseVideo = function(url){
-                    showVideo();
-                    if (video){
-                      video.src = url;
-                      try { video.load(); } catch(_) {}
-                    }
-                  }
-
-
-
-
-
-                
-                  // If either starts playing, remember which is active
-                  audio.addEventListener('play', () => current = 'audio');
-                  video.addEventListener('play', () => current = 'video');
-                
-
-                  // Mirror tempo to video when video is active (audio already handled elsewhere)
-                  if (tempo) {
-                    tempo.addEventListener('input', () => {
-                      if (current === 'video') {
-                        const r = parseFloat(tempo.value) || 1;
-                        video.playbackRate = r;
-                      }
-                    });
-                  }
-
-                  // Unified Big Play: always controls the active player (audio or video)
-                  big.addEventListener('click', function (e) {
-                    // prevent any older handlers from firing
-                    e.stopImmediatePropagation();
-
-                    if (current === 'video') {
-                      if (video.paused) { video.play().catch(()=>{}); } else { video.pause(); }
-                    } else {
-                      if (audio.paused) { audio.play().catch(()=>{}); } else { audio.pause(); }
-                    }
-
-                    // optional glyph sync
-                    try {
-                      const el = (current === 'video') ? video : audio;
-                      big.textContent = el.paused ? '▶︎' : '⏸';
-                    } catch(_) {}
-                  }, true); // capture phase
-
-
-
-
-                })();
-                </script>
-  <!-- URL loader and deep-link handler -->
-<script>
-  (function () {
-    const audioEl  = document.getElementById('audioPlayer');
-    const urlInput = document.getElementById('urlInput') || null;
-    const loadBtn  = document.getElementById('openUrl') || document.getElementById('loadFromUrl');
-    const statusEl = document.getElementById('status');
-  
-    if (!audioEl) return;
-  
-    async function setAudioSrc(url) {
-      try {
-        audioEl.crossOrigin = 'anonymous';
-        audioEl.src = url;
-        audioEl.load();
-        statusEl && (statusEl.textContent = 'Loaded from link');
-      } catch (e) {
-        console.warn('Direct src failed, trying fetch/blob fallback:', e);
-        try {
-          const res = await fetch(url, { mode: 'cors' });
-          const blob = await res.blob();
-          const obj = URL.createObjectURL(blob);
-          audioEl.src = obj;
-          audioEl.load();
-          statusEl && (statusEl.textContent = 'Loaded via blob');
-        } catch (e2) {
-          console.error('Both methods failed', e2);
-          statusEl && (statusEl.textContent = 'Failed to load link');
-        }
-      }
-    }
-  
-    // 1) Handle manual “Load URL” button clicks
-    if (loadBtn && urlInput) {
-      loadBtn.addEventListener('click', () => {
-        const raw = (urlInput.value || '').trim();
-        if (!raw) return;
-
-        setAudioSrc(raw);
-
-        try {
-            hc3LoadFromURL(raw);
-        } catch (e) {
-            console.warn('HC3 URL load failed, falling back:', e);
-            try { setAudioSrc(raw); } catch (_) {}
-        }
-
+    function setupGestureControl() {
+      window.addEventListener('deviceorientation', (event) => {
+        const now = Date.now();
+        if (!gestureEnabled || now - lastUpdateTime < UPDATE_INTERVAL) return;
+
+        const gamma = event.gamma ?? 0;
+        const beta = event.beta ?? 0;
+        const rate = calculatePlaybackRate(gamma);
+        const rounded = rate.toFixed(2);
+
+        log.textContent =
+          `gamma: ${gamma.toFixed(2)}°\n` +
+          `beta:  ${beta.toFixed(2)}°\n` +
+          `mapped playbackRate: ${rounded}`;
+
+        updatePlaybackRate(rate);
+        lastUpdateTime = now;
       });
     }
-  
-    // 2) Auto-load via query string: ?u=<encoded full URL> or ?track=<filename.mp3>
-    try {
-      const qs = new URLSearchParams(location.search);
-      let u = qs.get('u');
-      const track = qs.get('track');
-      if (!u && track) {
-        u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
+
+    gestureButton.addEventListener('click', () => {
+      if (!gestureEnabled) {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') {
+                gestureEnabled = true;
+                gestureButton.textContent = 'Disable Gesture Control';
+              }
+            })
+            .catch(err => console.error(err));
+        } else {
+          gestureEnabled = true;
+          gestureButton.textContent = 'Disable Gesture Control';
+        }
+      } else {
+        gestureEnabled = false;
+        gestureButton.textContent = 'Enable Gesture Control';
       }
-      if (u) {
-        const url = decodeURIComponent(u);
-        setAudioSrc(url);
-      }
-    } catch (e) {
-      console.warn('Query param loader skipped:', e);
+    });
+
+    setupGestureControl();
+
+    // Support ?track= URL param (for deep linking)
+
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const track = params.get('track');
+      if (!track) return;
+
+      const url = decodeURIComponent(track);
+      audioPlayer.crossOrigin = 'anonymous';
+      audioPlayer.src = url;
+      audioPlayer.load();
+      updatePlaybackRate(1.0); // reset slider, label, and playbackRate
+
+      // Show filename portion
+      const nameOnly = url.split('/').pop() || url;
+      showCurrentTrack(nameOnly);
+
+      audioPlayer.play().catch(() => { });
+    })();
+
+    // Helper: show "Now playing"
+    function showCurrentTrack(name) {
+      const el = document.getElementById('currentTrack');
+      if (!el) return;
+      el.textContent = name ? `Now playing: ${name}` : '';
     }
-  })();
+
+
+    function hc3LoadTestVideo() {
+      if (!hc3Player) {
+        console.warn("hc3-player element not found");
+        return;
+      }
+
+      const url = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+      try { hc3Player.pause(); } catch (_) { }
+
+      hc3Player.src = url;
+      hc3Player.load();
+
+      hc3Player.play().catch(err => {
+        console.warn("Unable to auto-play HC3 test video:", err);
+      });
+    }
+
+    function hc3LoadTestAudio() {
+      if (!hc3Player) {
+        console.warn("hc3-player element not found");
+        return;
+      }
+
+      // Simple public MP3 test file (same source as before)
+      const url = "https://www.w3schools.com/html/horse.mp3";
+
+      try { hc3Player.pause(); } catch (_) { }
+
+      hc3Player.src = url;
+      hc3Player.load();
+
+      hc3Player.play().catch(err => {
+        console.warn("Unable to auto-play HC3 test audio:", err);
+      });
+    }
+
+
+    /**
+     * Load a URL into the unified HC3 player and start playback.
+     * Works for both MP3 and MP4.
+     */
+
+
+    function hc3LoadFromURL(url) {
+      alert("HC3 loader was called with URL:\n" + url);
+
+      if (!hc3Player || !url) return;
+
+      try {
+        hc3Player.crossOrigin = 'anonymous'; // safe default for remote URLs
+      } catch (e) {
+        // ignore – some local blobs don’t support this
+      }
+
+      hc3Player.src = url;
+      hc3Player.load();
+
+      // Don’t worry if autoplay is blocked – user can tap the video
+      hc3Player.play().catch(() => { });
+    }
+
+
+  </script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const idRaw = params.get('id');
+      if (!idRaw) return;
+
+      // Allow subfolders and .mp3 filenames; strip unsafe chars
+      const id = idRaw.trim().replace(/[^a-zA-Z0-9/_\-.]/g, '');
+      if (!id || !id.endsWith('.mp3')) return;
+
+      // Base where your MP3s live today (can change later without changing links)
+      const BASE = 'https://laurenceglazier.github.io/hc-tracks/audio/';
+      const url = BASE + id;
+
+      const audio = document.querySelector('audio');
+      if (!audio) return;
+
+      audio.crossOrigin = 'anonymous';
+      audio.src = url;
+      try { audio.load(); } catch (e) { }
+      // Optional: auto-play
+      // audio.play().catch(()=>{});
+
+      // Keep the nice ?id=... URL (no username or full path shown)
+      history.replaceState(null, '', '/?id=' + encodeURIComponent(id));
+
+      // Optional: update a label
+      const label = document.getElementById('currentTrack');
+      if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
+    })();
+    (function () {
+      const audio = document.getElementById('audioPlayer');
+      const big = document.getElementById('bigPlay');
+      if (!audio || !big) return;
+
+      function sync() {
+        big.textContent = audio.paused ? '▶︎' : '⏸';
+      }
+
+
+      audio.addEventListener('play', sync);
+      audio.addEventListener('pause', sync);
+
+      sync(); // initialise button icon
+    })();
+    // --- Big Play/Pause controller that survives DOM changes ---
+    (function () {
+      let current; // whichever element is active: audio or video
+
+      function sync() {
+        const big = document.getElementById('bigPlay');
+        if (!big || !current) return;
+        big.textContent = current.paused ? '▶︎' : '⏸';
+      }
+
+      function bindTo(el) {
+        if (!el) return;
+        // remove old listeners if we had a previous current
+        if (current) {
+          current.removeEventListener('play', sync);
+          current.removeEventListener('pause', sync);
+        }
+        current = el;
+        current.addEventListener('play', sync);
+        current.addEventListener('pause', sync);
+        sync();
+      }
+
+      // Click handler (always looks up the current element)
+      document.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'bigPlay' && current) {
+          if (current.paused) current.play().catch(() => { }); else current.pause();
+        }
+      });
+
+      // Re-bind if your app swaps/rebuilds the player nodes
+      const mo = new MutationObserver(() => {
+        // Prefer #videoPlayer if visible, else #audioPlayer
+        const v = document.getElementById('videoPlayer');
+        const a = document.getElementById('audioPlayer');
+        const visible = v && v.style.display !== 'none' ? v : a;
+        if (visible && visible !== current) bindTo(visible);
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+
+      // Initial bind (in case elements already exist)
+      bindTo(document.getElementById('videoPlayer') || document.getElementById('audioPlayer'));
+    })();
+    (function () {
+      // Elements
+      const big = document.getElementById('bigPlay');
+      if (!big) return;
+
+      const getAudio = () => document.getElementById('audioPlayer');
+      let audio = null;
+
+      // Keep pitch constant across tempo changes (harmless if already true)
+      function enforcePitch(el) {
+        try { el.preservesPitch = true; } catch (_) { }
+        try { el.webkitPreservesPitch = true; } catch (_) { }
+        try { el.mozPreservesPitch = true; } catch (_) { }
+      }
+
+      // Update the button symbol to match the player state
+      function sync() {
+        if (!audio) return;
+        big.textContent = audio.paused ? '▶︎' : '⏸';
+      }
+
+      // (Re)bind listeners to the current audio element
+      function bind() {
+        const el = getAudio();
+        if (el === audio) return;
+
+        if (audio) {
+          audio.removeEventListener('play', sync);
+          audio.removeEventListener('pause', sync);
+        }
+        audio = el;
+        if (!audio) return;
+
+        enforcePitch(audio);
+        audio.addEventListener('play', sync);
+        audio.addEventListener('pause', sync);
+        sync();
+      }
+
+      // Initial bind
+      bind();
+
+      // If your "Open from Internet" code replaces DOM, rebind automatically
+      const mo = new MutationObserver(bind);
+      mo.observe(document.body, { childList: true, subtree: true });
+
+      // Resync symbol on tab visibility changes (belt-and-braces)
+      document.addEventListener('visibilitychange', sync);
+    })();
+
+    /* Dev override: intercept "Open from Internet" when testing locally */
+    (function () {
+      const isLocal = /^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname);
+      if (!isLocal) return; // Only run on Live Server
+
+      const link = document.getElementById('openInternet');
+      const audio = document.getElementById('audioPlayer');
+      if (!link || !audio) return;
+
+      link.addEventListener('click', (e) => {
+        e.preventDefault(); // stop opening new tab
+        const url = prompt('Paste the full MP3 URL to load here:');
+        if (!url) return;
+        try { audio.preservesPitch = audio.webkitPreservesPitch = audio.mozPreservesPitch = true; } catch (_) { }
+        audio.src = url;
+        audio.load();
+        // The big button already controls this audio
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      function useAudioDirect(url) {
+        const a = document.getElementById('audioPlayer');
+        const v = document.getElementById('videoPlayer');
+        try { v && v.pause(); } catch (_) { }
+        if (v) v.style.display = 'none';
+        if (a) {
+          a.style.display = '';
+          a.src = url;
+          try { a.load(); } catch (_) { }
+        }
+        // If helpers exist, let them (re)bind things too
+        if (window.hcUseAudio) window.hcUseAudio(url);
+      }
+
+      function useVideoDirect(url) {
+        const a = document.getElementById('audioPlayer');
+        const v = document.getElementById('videoPlayer');
+        try { a && a.pause(); } catch (_) { }
+        if (a) a.style.display = 'none';
+        if (v) {
+          v.style.display = '';
+          v.removeAttribute('height');
+          v.src = url;
+          try { v.load(); } catch (_) { }
+        }
+        if (window.hcUseVideo) window.hcUseVideo(url);
+      }
+
+      // Old version: route by extension
+
+      // function handleOpenUrl(){
+      //   const url = prompt('Paste an MP3 or MP4 URL…');
+      //   if (!url) return;
+      //   (/\.mp4(\?|#|$)/i.test(url) ? useVideoDirect : useAudioDirect)(url);
+      // }
+
+      function handleOpenUrl() {
+        const url = prompt('Paste an MP3 or MP4 URL…');
+        if (!url) return;
+
+        // Trim and send straight to HC3 unified player
+        hc3LoadFromURL(url.trim());
+      }
+
+      // Event delegation = works regardless of DOM order
+      document.addEventListener('click', function (e) {
+        if (e.target && e.target.id === 'openUrl') {
+          handleOpenUrl();
+        }
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      const audio = document.getElementById('audioPlayer');
+      const video = document.getElementById('videoPlayer'); // ok if absent for now
+      const elLocal = document.querySelector('label[for="audioInput"]');
+      const elLib = document.getElementById('openLibrary');
+      const elUrl = document.getElementById('openUrl');
+
+      function setChoosersEnabled(enabled) {
+        [elLocal, elLib, elUrl].forEach(el => {
+          if (!el) return;
+          if (el.tagName === 'BUTTON') el.disabled = !enabled;
+          el.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+          el.classList.toggle('is-disabled', !enabled);
+        });
+      }
+
+      function wire(el) {
+        if (!el) return;
+        el.addEventListener('play', () => setChoosersEnabled(false));
+        el.addEventListener('pause', () => setChoosersEnabled(true));
+        el.addEventListener('ended', () => setChoosersEnabled(true));
+      }
+
+      wire(audio);
+      wire(video);
+    })();
+  </script>
+  <script>
+    /* MP4 add-on: activates <video>, routes Big Play to video when active, mirrors tempo */
+    (function () {
+      const audio = document.getElementById('audioPlayer');
+      const video = document.getElementById('videoPlayer');
+      const big = document.getElementById('bigPlay');
+      const tempo = document.getElementById('tempoSlider');
+      if (!audio || !video || !big) return;
+
+      function keepPitch(el) {
+        try { el.preservesPitch = true; } catch (_) { }
+        try { el.webkitPreservesPitch = true; } catch (_) { }
+        try { el.mozPreservesPitch = true; } catch (_) { }
+      }
+      keepPitch(audio); keepPitch(video);
+
+      let current = 'audio';
+
+      function activateVideo() {
+        current = 'video';
+        try { audio.pause(); } catch (_) { }
+        audio.style.display = 'none';
+        video.style.display = '';
+      }
+      function activateAudio() {
+        current = 'audio';
+        try { video.pause(); } catch (_) { }
+        video.style.display = 'none';
+        audio.style.display = '';
+      }
+
+      // Public helper so we can load MP4s anywhere
+      window.hcUseVideo = function (url) {
+        activateVideo();
+        video.src = url;
+        try { video.load(); } catch (_) { }
+      };
+
+      // If something starts playing, remember which is active
+      audio.addEventListener('play', () => current = 'audio');
+      video.addEventListener('play', () => current = 'video');
+
+
+      // Mirror tempo to video when video is active
+      if (tempo) {
+        tempo.addEventListener('input', () => {
+          if (current === 'video') {
+            const r = parseFloat(tempo.value) || 1;
+            video.playbackRate = r;
+          }
+        });
+      }
+    })();
+  </script>
+  <script>
+    // Install minimal fallbacks if the helpers aren't defined yet.
+    // Safe to keep: if real versions exist, these won't overwrite them.
+    if (typeof window.hcUseAudio !== 'function') {
+      window.hcUseAudio = function (url) {
+        const a = document.getElementById('audioPlayer');
+        const v = document.getElementById('videoPlayer');
+        try { v && v.pause(); } catch (_) { }
+        if (v) v.style.display = 'none';
+        if (!a) return;
+        a.style.display = '';
+        a.src = url;
+        try { a.load(); } catch (_) { }
+      };
+      console.log('[hc] fallback hcUseAudio installed');
+    }
+
+    if (typeof window.hcUseVideo !== 'function') {
+      window.hcUseVideo = function (url) {
+        const a = document.getElementById('audioPlayer');
+        const v = document.getElementById('videoPlayer');
+        try { a && a.pause(); } catch (_) { }
+        if (a) a.style.display = 'none';
+        if (!v) return;
+        v.style.display = '';
+        v.removeAttribute('height'); // avoid tiny picture
+        v.src = url;
+        try { v.load(); } catch (_) { }
+      };
+      console.log('[hc] fallback hcUseVideo installed');
+    }
+  </script>
+  <script>
+    /* Minimal, robust MP4 wiring: helpers + Big Play + tempo mirror */
+    (function () {
+      const audio = document.getElementById('audioPlayer');
+      const video = document.getElementById('videoPlayer');
+      const big = document.getElementById('bigPlay');
+      const tempo = document.getElementById('tempoSlider');
+      if (!audio || !video || !big) return;
+
+      // Keep pitch constant if the browser supports it
+      function keepPitch(el) {
+        try { el.preservesPitch = true; } catch (_) { }
+        try { el.webkitPreservesPitch = true; } catch (_) { }
+        try { el.mozPreservesPitch = true; } catch (_) { }
+      }
+      keepPitch(audio); keepPitch(video);
+
+      // Track which element Big Play should control
+      let current = 'audio';
+
+      function stopAll() {
+        try { audio && audio.pause(); } catch (_) { }
+        try { video && video.pause(); } catch (_) { }
+      }
+
+
+
+      function showAudio() {
+        // stop + fully unload the video so its audio can't keep playing
+        stopAll();
+        if (video) {
+          video.removeAttribute('src');   // detach stream
+          try { video.load(); } catch (_) { }
+          video.style.display = 'none';
+        }
+        // show audio
+        if (audio) {
+          audio.style.display = '';
+        }
+        current = 'audio';
+      }
+
+
+      function showVideo() {
+        // stop + fully unload the audio so it can't keep playing
+        stopAll();
+        if (audio) {
+          audio.removeAttribute('src');   // detach stream
+          try { audio.load(); } catch (_) { }
+          audio.style.display = 'none';
+        }
+        // show video
+        if (video) {
+          video.style.display = '';
+          video.removeAttribute('height'); // avoid tiny letterboxing
+        }
+        current = 'video';
+      }
+
+
+
+
+      // Helpers used by "Open from URL" and the file picker
+
+
+      window.hcUseAudio = function (url) {
+        showAudio();
+        if (audio) {
+          audio.src = url;
+          try { audio.load(); } catch (_) { }
+        }
+      };
+
+      window.hcUseVideo = function (url) {
+        showVideo();
+        if (video) {
+          video.src = url;
+          try { video.load(); } catch (_) { }
+        }
+      }
+
+
+
+
+
+
+      // If either starts playing, remember which is active
+      audio.addEventListener('play', () => current = 'audio');
+      video.addEventListener('play', () => current = 'video');
+
+
+      // Mirror tempo to video when video is active (audio already handled elsewhere)
+      if (tempo) {
+        tempo.addEventListener('input', () => {
+          if (current === 'video') {
+            const r = parseFloat(tempo.value) || 1;
+            video.playbackRate = r;
+          }
+        });
+      }
+
+      // Unified Big Play: always controls the active player (audio or video)
+      big.addEventListener('click', function (e) {
+        // prevent any older handlers from firing
+        e.stopImmediatePropagation();
+
+        if (current === 'video') {
+          if (video.paused) { video.play().catch(() => { }); } else { video.pause(); }
+        } else {
+          if (audio.paused) { audio.play().catch(() => { }); } else { audio.pause(); }
+        }
+
+        // optional glyph sync
+        try {
+          const el = (current === 'video') ? video : audio;
+          big.textContent = el.paused ? '▶︎' : '⏸';
+        } catch (_) { }
+      }, true); // capture phase
+
+
+
+
+    })();
+  </script>
+  <!-- URL loader and deep-link handler -->
+  <script>
+    (function () {
+      const audioEl = document.getElementById('audioPlayer');
+      const urlInput = document.getElementById('urlInput') || null;
+      const loadBtn = document.getElementById('openUrl') || document.getElementById('loadFromUrl');
+      const statusEl = document.getElementById('status');
+
+      if (!audioEl) return;
+
+      async function setAudioSrc(url) {
+        try {
+          audioEl.crossOrigin = 'anonymous';
+          audioEl.src = url;
+          audioEl.load();
+          statusEl && (statusEl.textContent = 'Loaded from link');
+        } catch (e) {
+          console.warn('Direct src failed, trying fetch/blob fallback:', e);
+          try {
+            const res = await fetch(url, { mode: 'cors' });
+            const blob = await res.blob();
+            const obj = URL.createObjectURL(blob);
+            audioEl.src = obj;
+            audioEl.load();
+            statusEl && (statusEl.textContent = 'Loaded via blob');
+          } catch (e2) {
+            console.error('Both methods failed', e2);
+            statusEl && (statusEl.textContent = 'Failed to load link');
+          }
+        }
+      }
+
+      // 1) Handle manual “Load URL” button clicks
+      if (loadBtn && urlInput) {
+        loadBtn.addEventListener('click', () => {
+          const raw = (urlInput.value || '').trim();
+          if (!raw) return;
+
+          setAudioSrc(raw);
+
+          try {
+            hc3LoadFromURL(raw);
+          } catch (e) {
+            console.warn('HC3 URL load failed, falling back:', e);
+            try { setAudioSrc(raw); } catch (_) { }
+          }
+
+        });
+      }
+
+      // 2) Auto-load via query string: ?u=<encoded full URL> or ?track=<filename.mp3>
+      try {
+        const qs = new URLSearchParams(location.search);
+        let u = qs.get('u');
+        const track = qs.get('track');
+        if (!u && track) {
+          u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
+        }
+        if (u) {
+          const url = decodeURIComponent(u);
+          setAudioSrc(url);
+        }
+      } catch (e) {
+        console.warn('Query param loader skipped:', e);
+      }
+    })();
   </script>
 </body>
+
 </html>
