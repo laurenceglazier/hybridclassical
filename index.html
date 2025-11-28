@@ -263,6 +263,12 @@
     🌐 Internet
   </a>
 
+
+  <button onclick="hc3PromptAndLoadUrl()">
+    URL (HC3)
+  </button>
+
+
   <script>
 
     // If your loader is named differently, change this to call yours.
@@ -626,23 +632,63 @@
      */
 
 
-    function hc3LoadFromURL(url) {
-      alert("HC3 loader was called with URL:\n" + url);
+    // function hc3LoadFromURL(url) {
+    // alert("HC3 loader was called with URL:\n" + url);
 
+    // if (!hc3Player || !url) return;
+
+    // try {
+    //  hc3Player.crossOrigin = 'anonymous'; // safe default for remote URLs
+    // } catch (e) {
+    // ignore – some local blobs don’t support this
+    // }
+
+    // hc3Player.src = url;
+    // hc3Player.load();
+
+    // Don’t worry if autoplay is blocked – user can tap the video
+    // hc3Player.play().catch(() => { });
+    // }
+
+    function hc3LoadFromURL(url) {
       if (!hc3Player || !url) return;
 
       try {
-        hc3Player.crossOrigin = 'anonymous'; // safe default for remote URLs
+        hc3Player.crossOrigin = 'anonymous';
       } catch (e) {
-        // ignore – some local blobs don’t support this
+        // ignore
       }
 
       hc3Player.src = url;
       hc3Player.load();
 
-      // Don’t worry if autoplay is blocked – user can tap the video
-      hc3Player.play().catch(() => { });
+      // Make sure the user can see/use the controls
+      hc3Player.controls = true;
+      hc3Player.muted = false;
+      hc3Player.volume = 1.0;
+
+      const playPromise = hc3Player.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+          // Autoplay likely blocked – track *is* loaded though
+          alert('The track is loaded in the HC3 player – please press Play on the controls.');
+        });
+      }
     }
+
+
+
+
+    function hc3PromptAndLoadUrl() {
+      const raw = prompt('Paste an MP3 or MP4 URL for HC3:');
+      if (!raw) return;
+
+      const url = raw.trim();
+      if (!url) return;
+
+      hc3LoadFromURL(url);
+    }
+  </script>
 
 
   </script>
