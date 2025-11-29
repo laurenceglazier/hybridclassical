@@ -587,24 +587,31 @@
       el.textContent = name ? `Now playing: ${name}` : '';
     }
 
+    /*
+        function hc3LoadTestVideo() {
+          if (!hc3Player) {
+            console.warn("hc3-player element not found");
+            return;
+          }
+    
+          const url = "https://www.w3schools.com/html/mov_bbb.mp4";
+    
+          try { hc3Player.pause(); } catch (_) { }
+    
+          hc3Player.src = url;
+          hc3Player.load();
+    
+          hc3Player.play().catch(err => {
+            console.warn("Unable to auto-play HC3 test video:", err);
+          });
+        }
+    */
 
     function hc3LoadTestVideo() {
-      if (!hc3Player) {
-        console.warn("hc3-player element not found");
-        return;
-      }
-
-      const url = "https://www.w3schools.com/html/mov_bbb.mp4";
-
-      try { hc3Player.pause(); } catch (_) { }
-
-      hc3Player.src = url;
-      hc3Player.load();
-
-      hc3Player.play().catch(err => {
-        console.warn("Unable to auto-play HC3 test video:", err);
-      });
+      hc3LoadFromURL("https://www.w3schools.com/html/mov_bbb.mp4");
     }
+
+
 
     function hc3LoadTestAudio() {
       if (!hc3Player) {
