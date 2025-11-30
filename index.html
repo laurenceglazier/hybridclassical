@@ -657,6 +657,7 @@
     // hc3Player.play().catch(() => { });
     // }
 
+    /*
     function hc3LoadFromURL(url) {
       if (!hc3Player || !url) return;
 
@@ -683,7 +684,22 @@
       }
     }
 
+    */
 
+    function hc3LoadFromURL(url) {
+      if (!hc3Player || !url) return;
+
+      try {
+        hc3Player.pause();
+      } catch (_) { }
+
+      hc3Player.src = url;
+      hc3Player.load();
+
+      hc3Player.play().catch(err => {
+        console.warn("Unable to auto-play HC3 media:", err);
+      });
+    }
 
 
     function hc3PromptAndLoadUrl() {
