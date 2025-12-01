@@ -200,7 +200,7 @@
   <!-- TODO: consider moving player inside header/main layout -->
   <!-- HC3 unified media player -->
   <!-- HC3 Map: This should handle everything from simple input controls -->
-  <video id="hc3-player" playsinline webkit-playsinline preload="metadata"
+  <video id="hc3-player" playsinline webkit-playsinline preload="metadata" controls
     style="width:100%; max-height:40vh; background:#000;">
     Your browser does not support HTML5 video.
   </video>
@@ -263,10 +263,6 @@
     🌐 Internet
   </a>
 
-
-  <button onclick="hc3PromptAndLoadUrl()">
-    URL (HC3)
-  </button>
 
 
   <script>
@@ -335,7 +331,12 @@
     })();
   </script>
 
-
+  <div id="hc3-local-loader" style="margin-top: 1em;">
+    <input id="hc3-file" type="file" accept="audio/*,video/*">
+    <button type="button" onclick="hc3LoadLocal()">
+      Play in HC3
+    </button>
+  </div>
 
   <!-- Local file chooser -->
   <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
@@ -345,6 +346,10 @@
 
   <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
 
+  <!-- HC3 Load from URL -->
+  <button type="button" onclick="hc3PromptAndLoadUrl()">
+    URL (HC3)
+  </button>
 
 
 
@@ -388,6 +393,9 @@
     HC3 Test Audio
   </button>
   <button onclick="loadFromUrlSimple()">Load URL ----xxxx---- </button>
+
+
+
 
 
   <section id="share" style="display:none" style="text-align: center; padding: 2em; background: #f9f9f9; color: #222;">
@@ -701,6 +709,22 @@
       });
     }
 
+    function hc3LoadLocal() {
+      const f = document.getElementById('hc3-file');
+      if (!f || !f.files || !f.files[0]) {
+        alert("No file selected");
+        return;
+      }
+
+      const file = f.files[0];
+      const blobURL = URL.createObjectURL(file);
+
+      console.log("HC3 loading local file:", file.name, blobURL);
+
+      hc3LoadFromURL(blobURL);
+    }
+
+    window.hc3LoadLocal = hc3LoadLocal;
 
     function hc3PromptAndLoadUrl() {
       const raw = prompt('Paste an MP3 or MP4 URL for HC3:');
@@ -713,8 +737,6 @@
     }
   </script>
 
-
-  </script>
   <script>
     (function () {
       const params = new URLSearchParams(location.search);
