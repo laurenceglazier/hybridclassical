@@ -184,6 +184,13 @@
   <input id="urlInput" type="text" placeholder="Paste URL here">
   <button onclick="loadFromUrl()">Load</button>
 
+  <!--
+  
+  <button onclick="hc3LoadFromURL(document.getElementById('urlInput').value.trim())">
+    Load HC3
+  -->
+
+
 
   <!--
   // NOTE (dev): Simple test loader from URL.
@@ -273,6 +280,7 @@
 
 
 
+
     function loadFromUrl() {
       const url = document.getElementById("urlInput").value.trim();
       const player = document.getElementById("hc3-player");   // ← note the hyphen
@@ -298,19 +306,72 @@
       // Open a real new tab/window and keep a reference so we can close it later.
       const lib = window.open(pickerUrl, '_blank'); // no rel=noopener here
 
+
       function onMsg(ev) {
-        // Only accept messages from your live domain:
-        const allowedOrigin = 'https://www.hybridclassical.ai';
-        if (ev.origin !== allowedOrigin) return;
+        console.log('[HC] message from library:', ev.origin, ev.data);
+
+        const allowedOrigins = [
+          'https://www.hybridclassical.ai',
+          'https://hybridclassical.ai'
+        ];
+
+        if (!allowedOrigins.includes(ev.origin)) {
+          console.warn('[HC] Ignoring message from unexpected origin:', ev.origin);
+          return;
+        }
+
+
+        //==================
+        /*
+                const msg = ev.data || {};
+                if (msg.type === 'HC_SELECT_URL' && msg.url) {
+                  hc3LoadFromURL(msg.url);
+                  try {
+                    if (typeof setShareUrl === 'function') setShareUrl(msg.url);
+                  } catch (_) { }
+        
+                  try { lib && lib.close(); } catch (_) { }
+                  window.removeEventListener('message', onMsg);
+                }
+        */
+        //===================
 
         const msg = ev.data || {};
         if (msg.type === 'HC_SELECT_URL' && msg.url) {
-          loadFromUrl(msg.url);
+          let rawUrl = msg.url;
+          let mediaUrl = rawUrl;
+
+          try {
+            const u = new URL(rawUrl);
+
+            // If this is one of our /track/?id=... links, map it to the real MP3
+            const id = u.searchParams.get('id');
+            if (u.pathname.includes('/track') && id) {
+              const safeId = id.trim().replace(/[^a-zA-Z0-9/_\-.]/g, '');
+              mediaUrl = `https://laurenceglazier.github.io/hc-tracks/audio/${safeId}`;
+            }
+          } catch (e) {
+            console.warn('[HC] Could not parse library URL, using raw URL:', e);
+          }
+
+          console.log('[HC] resolved library media URL:', mediaUrl);
+
+          hc3LoadFromURL(mediaUrl);
+
+          // Update the shareable ?u= link with the *direct* media URL
+          try {
+            if (typeof setShareUrl === 'function') setShareUrl(mediaUrl);
+          } catch (_) { }
+
           try { lib && lib.close(); } catch (_) { }
           window.removeEventListener('message', onMsg);
         }
+
+
       }
+
       window.addEventListener('message', onMsg);
+
     }
 
     document.getElementById('openLibrary').addEventListener('click', openLibraryPicker);
@@ -321,15 +382,10 @@
       u.searchParams.set('u', srcUrl);
       history.replaceState(null, '', u);
     }
-
-    // Optional: auto-load if shared with ?u=...
-    (function bootFromParam() {
-      try {
-        const u = new URL(window.location.href).searchParams.get('u');
-        if (u) loadFromUrl(u);
-      } catch (_) { }
-    })();
   </script>
+
+
+
 
   <div id="hc3-local-loader" style="margin-top: 1em;">
     <input id="hc3-file" type="file" accept="audio/*,video/*">
@@ -427,14 +483,6 @@
         hc3Player.poster = logoImg.src;
       }
     }
-
-    // Test 25.11.27
-    document.getElementById("testUrlBtn").onclick = function () {
-      const url = document.getElementById("urlInput").value.trim();
-      const player = document.getElementById("hc3player");
-      player.src = url;
-      player.play();
-    };
 
 
 
@@ -570,6 +618,7 @@
 
     // Support ?track= URL param (for deep linking)
 
+    /*
     (function () {
       const params = new URLSearchParams(location.search);
       const track = params.get('track');
@@ -587,6 +636,7 @@
 
       audioPlayer.play().catch(() => { });
     })();
+    */
 
     // Helper: show "Now playing"
     function showCurrentTrack(name) {
@@ -694,6 +744,7 @@
 
     */
 
+
     function hc3LoadFromURL(url) {
       if (!hc3Player || !url) return;
 
@@ -708,6 +759,7 @@
         console.warn("Unable to auto-play HC3 media:", err);
       });
     }
+
 
     function hc3LoadLocal() {
       const f = document.getElementById('hc3-file');
@@ -1245,9 +1297,15 @@
         if (!u && track) {
           u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
         }
+        /*
         if (u) {
           const url = decodeURIComponent(u);
           setAudioSrc(url);
+        }
+        */
+        if (u) {
+          const url = decodeURIComponent(u);
+          hc3LoadFromURL(url);
         }
       } catch (e) {
         console.warn('Query param loader skipped:', e);
