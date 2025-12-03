@@ -790,6 +790,9 @@
   </script>
 
   <script>
+
+    /*
+    
     (function () {
       const params = new URLSearchParams(location.search);
       const idRaw = params.get('id');
@@ -819,64 +822,13 @@
       const label = document.getElementById('currentTrack');
       if (label) label.textContent = 'Now playing: ' + id.split('/').pop();
     })();
-    (function () {
-      const audio = document.getElementById('audioPlayer');
-      const big = document.getElementById('bigPlay');
-      if (!audio || !big) return;
 
-      function sync() {
-        big.textContent = audio.paused ? '▶︎' : '⏸';
-      }
+    */
 
 
-      audio.addEventListener('play', sync);
-      audio.addEventListener('pause', sync);
 
-      sync(); // initialise button icon
-    })();
-    // --- Big Play/Pause controller that survives DOM changes ---
-    (function () {
-      let current; // whichever element is active: audio or video
 
-      function sync() {
-        const big = document.getElementById('bigPlay');
-        if (!big || !current) return;
-        big.textContent = current.paused ? '▶︎' : '⏸';
-      }
 
-      function bindTo(el) {
-        if (!el) return;
-        // remove old listeners if we had a previous current
-        if (current) {
-          current.removeEventListener('play', sync);
-          current.removeEventListener('pause', sync);
-        }
-        current = el;
-        current.addEventListener('play', sync);
-        current.addEventListener('pause', sync);
-        sync();
-      }
-
-      // Click handler (always looks up the current element)
-      document.addEventListener('click', (e) => {
-        if (e.target && e.target.id === 'bigPlay' && current) {
-          if (current.paused) current.play().catch(() => { }); else current.pause();
-        }
-      });
-
-      // Re-bind if your app swaps/rebuilds the player nodes
-      const mo = new MutationObserver(() => {
-        // Prefer #videoPlayer if visible, else #audioPlayer
-        const v = document.getElementById('videoPlayer');
-        const a = document.getElementById('audioPlayer');
-        const visible = v && v.style.display !== 'none' ? v : a;
-        if (visible && visible !== current) bindTo(visible);
-      });
-      mo.observe(document.body, { childList: true, subtree: true });
-
-      // Initial bind (in case elements already exist)
-      bindTo(document.getElementById('videoPlayer') || document.getElementById('audioPlayer'));
-    })();
     (function () {
       // Elements
       const big = document.getElementById('bigPlay');
