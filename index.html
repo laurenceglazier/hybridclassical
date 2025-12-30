@@ -384,6 +384,7 @@
 
 
 
+  <!--
 
   <div id="hc3-local-loader" style="margin-top: 1em;">
     <input id="hc3-file" type="file" accept="audio/*,video/*">
@@ -391,6 +392,8 @@
       Play in HC3
     </button>
   </div>
+
+  -->
 
   <!-- Local file chooser -->
   <label for="audioInput" style="display: inline-block; margin-top: 1em; padding: 0.5em 1em;
@@ -420,9 +423,11 @@
     margin: 0.5em 0;
   "></div>
 
-  <button id="bigPlay" class="hc-big" aria-label="Play">▶︎</button>
-  <audio id="audioPlayer" controls></audio>
+
+  <audio id="audioPlayer" controls style="display:none"></audio>
   <video id="videoPlayer" controls playsinline style="display:none;width:100%;background:#000"></video>
+  <button id="bigPlay" style="display:none" class="hc-big" aria-label="Play">▶︎</button>
+
   <div id="currentTrack" style="margin:.5rem 0; opacity:.85;"></div>
 
   <!-- Stopped here: emoji layout tweak in progress -->
@@ -474,6 +479,9 @@
     const hc3Player = document.getElementById('hc3-player');
     const hc3TestBtn = document.getElementById('hc3-test');
 
+    // HC3 behaviour switches
+    const HC3_AUTOPLAY = true; // later: flip to false for performance use
+
     // Use the existing logo image as the HC3 poster
     if (hc3Player) {
       const logoImg = document.getElementById('hc-logo');
@@ -508,7 +516,7 @@
     let nudgeInterval = null;
 
     function updatePlaybackRate(rate) {
-      audioPlayer.playbackRate = rate;
+      hc3Player.playbackRate = rate;
       tempoSlider.value = rate.toFixed(2);
       rateDisplay.textContent = rate.toFixed(2) + '×';
     }
@@ -536,8 +544,6 @@
     document.addEventListener('touchend', stopNudge);
 
 
-
-
     audioInput.addEventListener('change', (event) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -545,14 +551,8 @@
       const url = URL.createObjectURL(file);
       const name = file.name || '';
 
-      // Route by extension: MP4 → video, otherwise → audio
-      if (/\.mp4$/i.test(name)) {
-        window.hcUseVideo(url);      // show and load video
-      } else {
-        window.hcUseAudio
-          ? window.hcUseAudio(url)   // call helper if defined
-          : (audioPlayer.src = url, audioPlayer.load());
-      }
+      // Unified HC3 path
+      hc3LoadFromURL(url);
 
       updatePlaybackRate(1.0);
       showCurrentTrack(name);
@@ -746,35 +746,35 @@
     function hc3LoadFromURL(url) {
       if (!hc3Player || !url) return;
 
-      try {
-        hc3Player.pause();
-      } catch (_) { }
+      try { hc3Player.pause(); } catch (_) { }
 
       hc3Player.src = url;
       hc3Player.load();
 
-      hc3Player.play().catch(err => {
-        console.warn("Unable to auto-play HC3 media:", err);
-      });
-    }
-
-
-    function hc3LoadLocal() {
-      const f = document.getElementById('hc3-file');
-      if (!f || !f.files || !f.files[0]) {
-        alert("No file selected");
-        return;
+      if (HC3_AUTOPLAY) {
+        hc3Player.play().catch(err => {
+          console.warn("Unable to auto-play HC3 media:", err);
+        });
       }
-
-      const file = f.files[0];
-      const blobURL = URL.createObjectURL(file);
-
-      console.log("HC3 loading local file:", file.name, blobURL);
-
-      hc3LoadFromURL(blobURL);
     }
 
-    window.hc3LoadLocal = hc3LoadLocal;
+    /*
+        function hc3LoadLocal() {
+          const f = document.getElementById('hc3-file');
+          if (!f || !f.files || !f.files[0]) {
+            alert("No file selected");
+            return;
+          }
+    
+          const file = f.files[0];
+          const blobURL = URL.createObjectURL(file);
+    
+          console.log("HC3 loading local file:", file.name, blobURL);
+    
+          hc3LoadFromURL(blobURL);
+        }
+    */
+    // window.hc3LoadLocal = hc3LoadLocal;
 
     function hc3PromptAndLoadUrl() {
       const raw = prompt('Paste an MP3 or MP4 URL for HC3:');
