@@ -404,10 +404,12 @@
   <input type="file" id="audioInput" accept="audio/*, .mp3" style="display: none;">
 
   <!-- HC3 Load from URL -->
+  <!--
+  
   <button type="button" onclick="hc3PromptAndLoadUrl()">
     URL (HC3)
   </button>
-
+  -->
 
 
   <!-- Allows direct URL input -->
@@ -1191,6 +1193,7 @@
   </script>
   <!-- URL loader and deep-link handler -->
   <script>
+    /* === DISABLED (legacy) deep-link loader that depends on #audioPlayer ===
     (function () {
       const audioEl = document.getElementById('audioPlayer');
       const urlInput = document.getElementById('urlInput') || null;
@@ -1252,10 +1255,55 @@
           const url = decodeURIComponent(u);
           setAudioSrc(url);
         }
-        */
+        
         if (u) {
           const url = decodeURIComponent(u);
           hc3LoadFromURL(url);
+        }
+      } catch (e) {
+        console.warn('Query param loader skipped:', e);
+      }
+    })();
+    === END DISABLED legacy loader === */
+    (function () {
+      const urlInput = document.getElementById('urlInput') || null;
+      const loadBtn = document.getElementById('openUrl') || document.getElementById('loadFromUrl');
+      const statusEl = document.getElementById('status') || null;
+
+      function setStatus(msg) {
+        if (statusEl) statusEl.textContent = msg;
+      }
+
+      // 1) Manual “Load URL” clicks → HC3 only
+      if (loadBtn && urlInput) {
+        loadBtn.addEventListener('click', () => {
+          const raw = (urlInput.value || '').trim();
+          if (!raw) return;
+
+          try {
+            hc3LoadFromURL(raw);
+            setStatus('Loaded into HC3');
+          } catch (e) {
+            console.warn('HC3 URL load failed:', e);
+            setStatus('Failed to load into HC3');
+          }
+        });
+      }
+
+      // 2) Auto-load via query string: ?u=<encoded full URL> or ?track=<filename.mp3>
+      try {
+        const qs = new URLSearchParams(location.search);
+        let u = qs.get('u');
+        const track = qs.get('track');
+
+        if (!u && track) {
+          u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
+        }
+
+        if (u) {
+          const url = decodeURIComponent(u);
+          hc3LoadFromURL(url);
+          setStatus('Auto-loaded into HC3');
         }
       } catch (e) {
         console.warn('Query param loader skipped:', e);
