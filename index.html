@@ -1294,7 +1294,8 @@
       try {
         const qs = new URLSearchParams(location.search);
         let u = qs.get('u');
-        const track = qs.get('track');
+        // const track = qs.get('track');
+        const track = qs.get('track') || qs.get('id'); // legacy alias
 
         if (!u && track) {
           u = `https://raw.githubusercontent.com/laurenceglazier/hc-tracks/main/audio/${track}`;
