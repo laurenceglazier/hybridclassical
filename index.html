@@ -42,11 +42,26 @@
     #rateDisplay {
       white-space: pre-wrap;
       font-family: monospace;
-      background: #f4f4f4;
       color: #000;
       padding: 1em;
       border-radius: 8px;
       margin-top: 1em;
+      text-align: center;
+    }
+
+    /* separate backgrounds */
+    #rateDisplay {
+      background: transparent;
+    }
+
+    /* or #fff */
+    #log {
+      background: #f4f4f4;
+      opacity: 0.9;
+    }
+
+    #log:empty {
+      display: none;
     }
 
     audio {
@@ -272,9 +287,7 @@
 
   </div>
   <h1>Hybrid Classical – Virtual Conductor</h1>
-  <p>Upload audio file, adjust tempo by slider or tilt. You can toggle gesture input.</p>
 
-  Choose Music:
 
   <!-- Online library button 
   <a href="https://www.hybridclassical.ai/library/"
